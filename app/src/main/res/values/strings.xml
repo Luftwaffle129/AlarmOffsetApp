@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AlarmOffsetApp</string>
+    <string name="no_alarms_set">No alarms set</string>
+    <string name="next_alarm">Next Alarm</string>
 </resources>

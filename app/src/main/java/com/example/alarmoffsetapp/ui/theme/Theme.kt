@@ -348,7 +348,7 @@ val unspecified_scheme = ColorFamily(
 )
 
 @Composable
-fun AlarmAppTheme(
+fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -367,6 +367,7 @@ fun AlarmAppTheme(
   MaterialTheme(
     colorScheme = colorScheme,
     typography = AppTypography,
+      shapes = Shapes,
     content = content
   )
 }
