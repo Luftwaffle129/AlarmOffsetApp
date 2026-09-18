@@ -26,6 +26,10 @@ import java.time.Duration
 import java.time.LocalDateTime
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.alarmoffsetapp.R
+import com.example.alarmoffsetapp.data.Alarm
+import com.example.alarmoffsetapp.data.AlarmGroup
+import com.example.alarmoffsetapp.ui.components.AlarmGroupList
+import com.example.alarmoffsetapp.ui.components.AlarmList
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.durationToString
 
@@ -36,34 +40,67 @@ fun HomeScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
-    LazyColumn(
+    HomeBody(
+        uiState = uiState.value,
+        onAlarmClick = viewModel::onAlarmClick,
+        onAlarmToggle = viewModel::onAlarmToggle,
+        onAlarmGroupClick = viewModel::onAlarmGroupClick,
+        onAlarmGroupToggle = viewModel::onAlarmGroupToggle,
         modifier = modifier
+    )
+}
+
+@Composable
+fun HomeBody(
+    uiState: HomeScreenUiState,
+    onAlarmClick: (Alarm) -> Unit,
+    onAlarmToggle: (Alarm) -> Unit,
+    onAlarmGroupClick: (AlarmGroup) -> Unit,
+    onAlarmGroupToggle: (AlarmGroup) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item {
+        item{
             Text(
                 text = stringResource(R.string.next_alarm),
                 style = MaterialTheme.typography.labelLarge,
             )
+        }
+        item {
             NextAlarm(
-                nextAlarm = uiState.value.nextAlarm,
-                timeUntilNextAlarm = uiState.value.timeUntilNextAlarm
+                nextAlarm = uiState.nextAlarm,
+                timeUntilNextAlarm = uiState.timeUntilNextAlarm
             )
         }
         item {
             Text(
-                text = stringResource(R.string.next_alarm),
+                text = stringResource(R.string.alarm_groups),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
-
+        item {
+            AlarmGroupList(
+                alarmGroups = uiState.alarmGroups,
+                onAlarmGroupClick = onAlarmGroupClick,
+                onAlarmGroupToggle = onAlarmGroupToggle
+            )
+        }
         item {
             Text(
-                text = stringResource(R.string.next_alarm),
+                text = stringResource(R.string.alarms),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
         item {
-
+            AlarmList(
+                alarms = uiState.alarms,
+                onAlarmClick = onAlarmClick,
+                onAlarmToggle = onAlarmToggle,
+                is24Hour = true                                 // TODO: handle 24 hour
+            )
         }
     }
 }
@@ -79,7 +116,7 @@ fun NextAlarm(
             .height(128.dp)
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.secondaryContainer
+        color = MaterialTheme.colorScheme.primaryContainer
     ) {
         if (nextAlarm == null || timeUntilNextAlarm == null) {
             Box(
@@ -116,24 +153,87 @@ fun NextAlarm(
     }
 }
 
-
-
+@Preview(showBackground = true)
 @Composable
-fun Alarms(modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.secondaryContainer
-    ) {
+fun HomeBodyLightPreview() {
+    val alarm = Alarm(
+        id = 0,
+        name = "test",
+        nextTime = LocalDateTime.now(),
+        daysOfWeek = setOf(),
+        isVibrating = true,
+        alarmOffsets = listOf(),
+        isActive = false,
+        canSnoozeOffsets = true
+    )
+    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
+    val alarmGroup = AlarmGroup(
+        id = 0,
+        name = "test",
+        alarms = alarms,
+        isActive = false,
+    )
+    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
 
+    val uiState = HomeScreenUiState(
+        nextAlarm = LocalDateTime.now(),
+        timeUntilNextAlarm = Duration.ofDays(1),
+        alarmGroups = alarmGroups,
+        alarms = alarms
+    )
+
+    AppTheme(dynamicColor = false, darkTheme = false) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeBody(
+                uiState = uiState,
+                onAlarmClick = {},
+                onAlarmToggle = {},
+                onAlarmGroupClick = {},
+                onAlarmGroupToggle = {}
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
-    AppTheme(dynamicColor = false, darkTheme = false) {
-        HomeScreen()
+fun HomeBodyDarkPreview() {
+    val alarm = Alarm(
+        id = 0,
+        name = "test",
+        nextTime = LocalDateTime.now(),
+        daysOfWeek = setOf(),
+        isVibrating = true,
+        alarmOffsets = listOf(),
+        isActive = false,
+        canSnoozeOffsets = true
+    )
+    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
+    val alarmGroup = AlarmGroup(
+        id = 0,
+        name = "test",
+        alarms = alarms,
+        isActive = false,
+    )
+    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
+
+    val uiState = HomeScreenUiState(
+        nextAlarm = LocalDateTime.now(),
+        timeUntilNextAlarm = Duration.ofDays(1),
+        alarmGroups = alarmGroups,
+        alarms = alarms
+    )
+
+    AppTheme(dynamicColor = false, darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HomeBody(
+                uiState = uiState,
+                onAlarmClick = {},
+                onAlarmToggle = {},
+                onAlarmGroupClick = {},
+                onAlarmGroupToggle = {}
+            )
+        }
     }
 }
 
