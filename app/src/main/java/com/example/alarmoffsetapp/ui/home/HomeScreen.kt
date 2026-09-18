@@ -40,25 +40,39 @@ fun HomeScreen(
         modifier = modifier
     ) {
         item {
-            Column() {
-                Text(
-                    text = stringResource(R.string.next_alarm),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                NextAlarm(
-                    nextAlarm = uiState.value.nextAlarm,
-                    timeUntilNextAlarm = uiState.value.timeUntilNextAlarm
-                )
-            }
+            Text(
+                text = stringResource(R.string.next_alarm),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            NextAlarm(
+                nextAlarm = uiState.value.nextAlarm,
+                timeUntilNextAlarm = uiState.value.timeUntilNextAlarm
+            )
+        }
+        item {
+            Text(
+                text = stringResource(R.string.next_alarm),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+
+        item {
+            Text(
+                text = stringResource(R.string.next_alarm),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        item {
+
         }
     }
 }
 
 @Composable
 fun NextAlarm(
+    nextAlarm: LocalDateTime?,
+    timeUntilNextAlarm: Duration?,
     modifier: Modifier = Modifier,
-    nextAlarm: LocalDateTime? = null,
-    timeUntilNextAlarm: Duration? = null,
 ) {
     Surface(
         modifier = modifier
@@ -102,16 +116,7 @@ fun NextAlarm(
     }
 }
 
-@Composable
-fun AlarmGroups(modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.secondaryContainer
-    ) {
 
-    }
-}
 
 @Composable
 fun Alarms(modifier: Modifier = Modifier) {
@@ -138,10 +143,11 @@ fun NextAlarmPreview() {
     AppTheme(dynamicColor = false, darkTheme = false) {
         NextAlarm(
             nextAlarm = LocalDateTime.now(),
-            timeUntilNextAlarm = Duration.ofHours(1)
+            timeUntilNextAlarm = Duration.ofDays(1)
         )
     }
 }
+
 @Preview()
 @Composable
 fun NextAlarmPreviewEmpty() {
