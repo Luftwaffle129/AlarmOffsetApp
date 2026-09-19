@@ -20,5 +20,6 @@ testing:
  [ ] alarm creation
 
 extras:
-[ ] easy delete, sort order and alarm grouping in home screen
-[ ] sorting alarm order on home screen
+ [ ] easy delete, sort order and alarm grouping in home screen
+ [ ] sorting alarm order on home screen
+ [ ] disable alarm groups
