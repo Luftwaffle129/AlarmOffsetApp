@@ -17,9 +17,14 @@ class HomeScreenViewModel: ViewModel() {
         return Duration.between(uiState.value.nextAlarm, LocalDateTime.now())
     }
 
+    fun onAddAlarm() {
+
+    }
+
     fun onAlarmGroupClick(alarmGroup: AlarmGroup) {
 
     }
+
     fun onAlarmGroupToggle(alarmGroup: AlarmGroup) {
 
     }
@@ -27,6 +32,7 @@ class HomeScreenViewModel: ViewModel() {
     fun onAlarmClick(alarm: Alarm) {
 
     }
+
     fun onAlarmToggle(alarm: Alarm) {
 
     }

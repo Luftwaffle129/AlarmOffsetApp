@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BrowseGallery
 import androidx.compose.material3.Surface
+import androidx.compose.ui.res.dimensionResource
 import com.example.alarmoffsetapp.data.AlarmOffset
 import com.example.alarmoffsetapp.ui.util.dateTimeToTimeString
 import com.example.alarmoffsetapp.ui.util.getAmOrPm
@@ -49,7 +50,7 @@ fun AlarmList(
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         alarms.forEach { alarm ->
@@ -81,7 +82,12 @@ fun AlarmCard(
         )
     ) {
         Row(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(
+                start = dimensionResource(R.dimen.padding_medium),
+                end = dimensionResource(R.dimen.padding_medium),
+                top = dimensionResource(R.dimen.padding_small),
+                bottom = dimensionResource(R.dimen.padding_small)
+            )
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -92,7 +98,7 @@ fun AlarmCard(
             ) {
                 Text(
                     text = alarm.name,
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
@@ -111,7 +117,7 @@ fun AlarmCard(
                 )
                 Text (
                     text = dateTimeToDateString(alarm.nextTime),
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -123,7 +129,7 @@ fun AlarmCard(
                     Icon(
                         imageVector = Icons.Outlined.BrowseGallery,
                         contentDescription = null,
-                        modifier = Modifier.padding(start = 16.dp, end = 8.dp).size(32.dp),
+                        modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium), end = dimensionResource(R.dimen.padding_small)).size(32.dp),
                         tint = if (alarm.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
@@ -138,7 +144,7 @@ fun AlarmCard(
                 Switch(
                     checked = alarm.isActive,
                     onCheckedChange = { onToggle(alarm.copy(isActive = !alarm.isActive)) },
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.onSecondary,
                         checkedTrackColor = MaterialTheme.colorScheme.onSecondaryContainer,

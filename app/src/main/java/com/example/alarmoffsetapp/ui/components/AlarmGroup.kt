@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -57,7 +58,7 @@ fun AlarmGroupList(
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         alarmGroups.forEach { alarmGroup ->
@@ -94,7 +95,12 @@ fun AlarmGroupCard(
         )
     ) {
         Row(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(
+                start = dimensionResource(R.dimen.padding_medium),
+                end = dimensionResource(R.dimen.padding_medium),
+                top = dimensionResource(R.dimen.padding_small),
+                bottom = dimensionResource(R.dimen.padding_small)
+            )
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -116,7 +122,7 @@ fun AlarmGroupCard(
                 Icon(
                     imageVector = Icons.Outlined.AlarmOn,
                     contentDescription = null,
-                    modifier = Modifier.padding(start = 16.dp, end = 4.dp).size(24.dp),
+                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium), end = dimensionResource(R.dimen.padding_extra_small)).size(28.dp),
                     tint = if (alarmGroup.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
@@ -129,7 +135,7 @@ fun AlarmGroupCard(
                 Icon(
                     imageVector = Icons.Outlined.AlarmOff,
                     contentDescription = null,
-                    modifier = Modifier.padding(start = 16.dp, end = 4.dp).size(24.dp),
+                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium), end = dimensionResource(R.dimen.padding_extra_small)).size(28.dp),
                     tint = if (alarmGroup.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
@@ -143,7 +149,7 @@ fun AlarmGroupCard(
                 Switch(
                     checked = alarmGroup.isActive,
                     onCheckedChange = { onToggle(alarmGroup.copy(isActive = !alarmGroup.isActive)) },
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.onSecondary,
                         checkedTrackColor = MaterialTheme.colorScheme.onSecondaryContainer,

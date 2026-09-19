@@ -48,14 +48,18 @@ fun durationToString(duration: Duration) : String {
 }
 
 @Composable
+fun dateTimeToString(dateTime: LocalDateTime, is24HourFormat: Boolean = true) : String {
+    return dateTimeToTimeString(dateTime, is24HourFormat) + " " + dateTimeToDateString(dateTime)
+}
+
+@Composable
 fun dateTimeToDateString(dateTime: LocalDateTime) : String {
-    val pattern = "d MMM"
+    val pattern = "MMM d"
     return dateTime.format(DateTimeFormatter.ofPattern(pattern)) // return date format with capitalized first letters
         .lowercase()
         .split(" ")
         .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } } // English only, apply locale to handle other languages
 }
-
 
 @Composable
 fun dateTimeToTimeString(dateTime: LocalDateTime, is24HourFormat: Boolean = true) : String {

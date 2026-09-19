@@ -1,14 +1,20 @@
 package com.example.alarmoffsetapp.ui.home
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,10 +23,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.alarmoffsetapp.ui.AppViewModelProvider
 import java.time.Duration
 import java.time.LocalDateTime
@@ -31,6 +40,7 @@ import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.ui.components.AlarmGroupList
 import com.example.alarmoffsetapp.ui.components.AlarmList
 import com.example.alarmoffsetapp.ui.theme.AppTheme
+import com.example.alarmoffsetapp.ui.util.dateTimeToString
 import com.example.alarmoffsetapp.ui.util.durationToString
 
 @Composable
@@ -42,6 +52,7 @@ fun HomeScreen(
 
     HomeBody(
         uiState = uiState.value,
+        onAddAlarm = viewModel::onAddAlarm,
         onAlarmClick = viewModel::onAlarmClick,
         onAlarmToggle = viewModel::onAlarmToggle,
         onAlarmGroupClick = viewModel::onAlarmGroupClick,
@@ -53,6 +64,7 @@ fun HomeScreen(
 @Composable
 fun HomeBody(
     uiState: HomeScreenUiState,
+    onAddAlarm: () -> Unit,
     onAlarmClick: (Alarm) -> Unit,
     onAlarmToggle: (Alarm) -> Unit,
     onAlarmGroupClick: (AlarmGroup) -> Unit,
@@ -64,9 +76,10 @@ fun HomeBody(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item{
-            Text(
-                text = stringResource(R.string.next_alarm),
-                style = MaterialTheme.typography.labelLarge,
+            RegionTitle(
+                title = R.string.next_alarm,
+                icon = Icons.Outlined.MoreVert,
+                onIconClick = {}                    // TODO: settings bar
             )
         }
         item {
@@ -76,9 +89,10 @@ fun HomeBody(
             )
         }
         item {
-            Text(
-                text = stringResource(R.string.alarm_groups),
-                style = MaterialTheme.typography.labelLarge,
+            RegionTitle(
+                title = R.string.alarm_groups,
+                icon = null,
+                onTextClick = {},                   // TODO: Open only alarm groups menu
             )
         }
         item {
@@ -89,9 +103,11 @@ fun HomeBody(
             )
         }
         item {
-            Text(
-                text = stringResource(R.string.alarms),
-                style = MaterialTheme.typography.labelLarge,
+            RegionTitle(
+                title = R.string.alarms,
+                icon = Icons.Outlined.Add,
+                onTextClick = {},                   // TODO: Open only alarm groups menu
+                onIconClick = onAddAlarm
             )
         }
         item {
@@ -99,8 +115,43 @@ fun HomeBody(
                 alarms = uiState.alarms,
                 onAlarmClick = onAlarmClick,
                 onAlarmToggle = onAlarmToggle,
-                is24Hour = true                                 // TODO: handle 24 hour
+                is24Hour = true                     // TODO: handle 24 hour
             )
+        }
+    }
+}
+
+@Composable
+fun RegionTitle(
+    @StringRes title: Int,
+    icon: ImageVector?,
+    onTextClick: () -> Unit = {},
+    onIconClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(title),
+            style = MaterialTheme.typography.labelLarge,
+            fontSize = 20.sp
+        )
+        Row(
+            modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small))
+                )
+            }
         }
     }
 }
@@ -120,7 +171,7 @@ fun NextAlarm(
     ) {
         if (nextAlarm == null || timeUntilNextAlarm == null) {
             Box(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -132,20 +183,20 @@ fun NextAlarm(
         } else {
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(dimensionResource(R.dimen.padding_medium)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 // time until next alarm finishes
                 Text(
-                    text = durationToString(timeUntilNextAlarm), // placeholder
+                    text = durationToString(timeUntilNextAlarm),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.displaySmall
                 )
-                Spacer(modifier.height(4.dp))
+                Spacer(modifier.height(dimensionResource(R.dimen.padding_small)))
                 // exact time of next alarm
                 Text(
-                    text = "23:07:01   September 3",
+                    text = dateTimeToString(nextAlarm),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -186,6 +237,7 @@ fun HomeBodyLightPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
                 uiState = uiState,
+                onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 onAlarmGroupClick = {},
@@ -228,6 +280,7 @@ fun HomeBodyDarkPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
                 uiState = uiState,
+                onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 onAlarmGroupClick = {},
