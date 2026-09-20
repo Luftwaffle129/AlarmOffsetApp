@@ -3,6 +3,7 @@ package com.example.alarmoffsetapp.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -31,10 +31,13 @@ import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.dateTimeToDateString
 import java.time.LocalDateTime
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BrowseGallery
+import androidx.compose.material.icons.outlined.DoubleArrow
 import androidx.compose.material3.Surface
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.dimensionResource
 import com.example.alarmoffsetapp.data.AlarmOffset
 import com.example.alarmoffsetapp.preview.SampleData
@@ -76,6 +79,8 @@ fun AlarmCard(
     modifier: Modifier = Modifier,
     is24Hour: Boolean,
 ) {
+    val baseAlarmAfterAlarmOffset = alarm.getNextBaseAlarm() > alarm.getNextAlarm()
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -107,35 +112,44 @@ fun AlarmCard(
                 )
                 Text(
                     text = buildAnnotatedString {
-                        append(dateTimeToTimeString(alarm.getNextAlarm(), is24Hour))
+                        append(dateTimeToTimeString(alarm.getNextBaseAlarm(), is24Hour))
                         if (!is24Hour) withStyle(
                             SpanStyle(
                                 fontSize = 28.sp
                             )
                         ) {
                             append("\u200A")
-                            append(getAmOrPm(alarm.getNextAlarm()))
+                            append(getAmOrPm(alarm.getNextBaseAlarm()))
                         }
                     },
                     style = MaterialTheme.typography.displayLarge
                 )
                 Text (
-                    text = dateTimeToDateString(alarm.getNextAlarm()),
+                    text = dateTimeToDateString(alarm.getNextBaseAlarm()),
                     modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (alarm.alarmOffsets.isNotEmpty()) {
-                    Column() {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = dimensionResource(R.dimen.padding_medium)),
+                    ) {
                         Surface(
                             modifier = Modifier
-                                .padding(start = dimensionResource(R.dimen.padding_medium)),
+                                .align(Alignment.Center),
                             shape = CircleShape,
-                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            color =
+                                if (alarm.isActive && !baseAlarmAfterAlarmOffset)
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                else
+                                    MaterialTheme.colorScheme.surfaceContainer,
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -147,7 +161,11 @@ fun AlarmCard(
                                     modifier = Modifier
                                         .padding(start = 8.dp)
                                         .size(32.dp),
-                                    tint = if (alarm.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    tint = when {
+                                        alarm.isActive && baseAlarmAfterAlarmOffset -> MaterialTheme.colorScheme.onSurfaceVariant
+                                        alarm.isActive && !baseAlarmAfterAlarmOffset -> MaterialTheme.colorScheme.onSecondaryContainer
+                                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
                                 )
 
                                 Text(
@@ -159,25 +177,35 @@ fun AlarmCard(
                                 )
                             }
                         }
-
-//                        Row(
-//                            verticalAlignment = Alignment.CenterVertically,
-//                            horizontalArrangement = Arrangement.SpaceBetween
-//                        ) {
-//                            Icon(
-//                                imageVector = Icons.Outlined.BrowseGallery,
-//                                contentDescription = null,
-//                                modifier = Modifier.padding().size(32.dp),
-//                                tint = if (alarm.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-//                            )
-//                            Text(
-//                                text = alarm.alarmOffsets.size.toString(),
-//                                modifier = Modifier,
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                fontSize = 28.sp,
-//                                textAlign = TextAlign.Center
-//                            )
-//                        }
+                        if (baseAlarmAfterAlarmOffset && alarm.isActive) { // placeholder
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .offset(y=24.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.DoubleArrow,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 4.dp).size(16.dp),
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
+                                Text(
+                                    text = buildAnnotatedString {
+                                        append(dateTimeToTimeString(alarm.getNextAlarm(), is24Hour))
+                                        if (!is24Hour) {
+                                            append("\u200A")
+                                            append(getAmOrPm(alarm.getNextAlarm()))
+                                        }
+                                    },
+                                    modifier = Modifier,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
 

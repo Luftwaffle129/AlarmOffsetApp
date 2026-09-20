@@ -17,17 +17,39 @@ data class Alarm(
     val canDismissOffsets: Boolean,
     val alarmOffsets: List<AlarmOffset>,
 ) {
-    fun getNextDate(): LocalDate {
-        if (!isRepeating && scheduledDate != null) return scheduledDate
+    fun getNextBaseAlarm(): LocalDateTime {
+        val now = LocalDateTime.now()
 
-        if (daysOfWeek?.isEmpty() ?: true) throw Exception("Alarm is repeating but has no repeating days")
+        if (!isRepeating) { // if alarm is not repeating and has a next date
+            if (scheduledDate == null) {
+                throw Exception("Alarm is not repeating and has no next date") // TODO: update with better exception
+            }
 
-        // get next day it is repeating on
-        val now = LocalDate.now()
-        // return base time on next repeating day
-        while (true) {
-            now.plusDays(1)
-            if (daysOfWeek.contains(now.dayOfWeek)) return now // if day of week is not in the list of active days, continue
+            val baseDateTime = LocalDateTime.of(scheduledDate, baseTime)
+
+            // if base time after current time, return base time
+            if (baseDateTime.isAfter(now)) return baseDateTime
+
+            return LocalDateTime.of(LocalDateTime.now().toLocalDate().plusDays(1), baseTime) // else, return alarm time tomorrow
+
+        } else { // alarm is repeating
+
+            if (daysOfWeek?.isEmpty() == true) {
+                throw Exception("Alarm is repeating but has no repeating days") // TODO: update with better exception
+            }
+
+            val nextDateTime = now.with(baseTime)
+
+            // if alarm on current day is active and time of next alarm is in the future, return time
+            if (daysOfWeek?.contains(nextDateTime.dayOfWeek) == true && nextDateTime.isAfter(now)) {
+                return nextDateTime
+            }
+
+            // return base time on next repeating day
+            while (true) {
+                nextDateTime.plusDays(1)
+                if (daysOfWeek?.contains(nextDateTime.dayOfWeek) == true ) return nextDateTime // if day of week is not in the list of active days, continue
+            }
         }
     }
     fun getNextAlarm(): LocalDateTime {

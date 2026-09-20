@@ -8,7 +8,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-
+import java.util.Date
 
 object SampleData {
     val alarmOffset = AlarmOffset(
@@ -21,7 +21,7 @@ object SampleData {
     val alarm = Alarm(
         id = 0,
         name = "test",
-        baseTime = LocalTime.now(),
+        baseTime = LocalTime.now().plusMinutes(0),
         isRepeating = false,
         scheduledDate = LocalDate.now(),
         daysOfWeek = setOf(),
