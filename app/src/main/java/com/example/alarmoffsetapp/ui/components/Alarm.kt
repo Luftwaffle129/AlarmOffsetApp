@@ -1,6 +1,7 @@
 package com.example.alarmoffsetapp.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,11 +31,14 @@ import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.dateTimeToDateString
 import java.time.LocalDateTime
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BrowseGallery
 import androidx.compose.material3.Surface
 import androidx.compose.ui.res.dimensionResource
 import com.example.alarmoffsetapp.data.AlarmOffset
+import com.example.alarmoffsetapp.preview.SampleData
+import com.example.alarmoffsetapp.ui.theme.Shapes
 import com.example.alarmoffsetapp.ui.util.dateTimeToTimeString
 import com.example.alarmoffsetapp.ui.util.getAmOrPm
 import java.time.Duration
@@ -103,20 +107,20 @@ fun AlarmCard(
                 )
                 Text(
                     text = buildAnnotatedString {
-                        append(dateTimeToTimeString(alarm.nextTime, is24Hour))
+                        append(dateTimeToTimeString(alarm.getNextAlarm(), is24Hour))
                         if (!is24Hour) withStyle(
                             SpanStyle(
                                 fontSize = 28.sp
                             )
                         ) {
                             append("\u200A")
-                            append(getAmOrPm(alarm.nextTime))
+                            append(getAmOrPm(alarm.getNextAlarm()))
                         }
                     },
                     style = MaterialTheme.typography.displayLarge
                 )
                 Text (
-                    text = dateTimeToDateString(alarm.nextTime),
+                    text = dateTimeToDateString(alarm.getNextAlarm()),
                     modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -126,19 +130,55 @@ fun AlarmCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (alarm.alarmOffsets.isNotEmpty()) {
-                    Icon(
-                        imageVector = Icons.Outlined.BrowseGallery,
-                        contentDescription = null,
-                        modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium), end = dimensionResource(R.dimen.padding_small)).size(32.dp),
-                        tint = if (alarm.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = alarm.alarmOffsets.size.toString(),
-                        modifier = Modifier,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Column() {
+                        Surface(
+                            modifier = Modifier
+                                .padding(start = dimensionResource(R.dimen.padding_medium)),
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.BrowseGallery,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .padding(start = 8.dp)
+                                        .size(32.dp),
+                                    tint = if (alarm.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+
+                                Text(
+                                    text = alarm.alarmOffsets.size.toString(),
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontSize = 28.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.SpaceBetween
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Outlined.BrowseGallery,
+//                                contentDescription = null,
+//                                modifier = Modifier.padding().size(32.dp),
+//                                tint = if (alarm.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+//                            )
+//                            Text(
+//                                text = alarm.alarmOffsets.size.toString(),
+//                                modifier = Modifier,
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                fontSize = 28.sp,
+//                                textAlign = TextAlign.Center
+//                            )
+//                        }
+                    }
                 }
 
                 Switch(
@@ -164,16 +204,7 @@ fun AlarmCardPreviewLight() {
         val alarmOffset = AlarmOffset(offset = Duration.ZERO, isActive = true)
 
         AlarmCard(
-            alarm = Alarm(
-                id = 0,
-                name = "test",
-                nextTime = LocalDateTime.now(),
-                daysOfWeek = setOf(),
-                isVibrating = true,
-                alarmOffsets = listOf(alarmOffset),
-                isActive = true,
-                canSnoozeOffsets = true
-            ),
+            alarm = SampleData.alarm,
             onClick = {},
             onToggle = {},
             is24Hour = false
@@ -184,22 +215,9 @@ fun AlarmCardPreviewLight() {
 @Preview(showBackground = true)
 @Composable
 fun AlarmListPreviewLight() {
-    val alarmOffset = AlarmOffset(offset = Duration.ZERO, isActive = true)
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(alarmOffset),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true, alarmOffsets = listOf()), alarm)
-
     AppTheme(dynamicColor = false, darkTheme = false) {
         AlarmList(
-            alarms = alarms,
+            alarms = SampleData.alarms,
             onAlarmClick = {},
             onAlarmToggle = {},
             is24Hour = false
@@ -213,16 +231,7 @@ fun AlarmCardPreviewDark() {
     val alarmOffset = AlarmOffset(offset = Duration.ZERO, isActive = true)
     AppTheme(dynamicColor = false, darkTheme = true) {
         AlarmCard(
-            alarm = Alarm(
-                id = 0,
-                name = "test",
-                nextTime = LocalDateTime.now(),
-                daysOfWeek = setOf(),
-                isVibrating = true,
-                alarmOffsets = listOf(alarmOffset),
-                isActive = true,
-                canSnoozeOffsets = true
-            ),
+            alarm = SampleData.alarm,
             onClick = {},
             onToggle = {},
             is24Hour = false
@@ -233,23 +242,10 @@ fun AlarmCardPreviewDark() {
 @Preview(showBackground = true)
 @Composable
 fun AlarmListPreviewDark() {
-    val alarmOffset = AlarmOffset(offset = Duration.ZERO, isActive = true)
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(alarmOffset),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true, alarmOffsets = listOf()), alarm)
-
     AppTheme(dynamicColor = false, darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
             AlarmList(
-                alarms = alarms,
+                alarms = SampleData.alarms,
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 is24Hour = false

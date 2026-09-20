@@ -37,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.alarmoffsetapp.R
 import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.data.AlarmGroup
+import com.example.alarmoffsetapp.preview.SampleData
 import com.example.alarmoffsetapp.ui.components.AlarmGroupList
 import com.example.alarmoffsetapp.ui.components.AlarmList
 import com.example.alarmoffsetapp.ui.theme.AppTheme
@@ -207,36 +208,11 @@ fun NextAlarm(
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyLightPreview() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
-
-    val uiState = HomeScreenUiState(
-        nextAlarm = LocalDateTime.now(),
-        timeUntilNextAlarm = Duration.ofDays(1),
-        alarmGroups = alarmGroups,
-        alarms = alarms
-    )
 
     AppTheme(dynamicColor = false, darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
-                uiState = uiState,
+                uiState = SampleData.homeScreenUiState,
                 onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
@@ -250,36 +226,10 @@ fun HomeBodyLightPreview() {
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyDarkPreview() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
-
-    val uiState = HomeScreenUiState(
-        nextAlarm = LocalDateTime.now(),
-        timeUntilNextAlarm = Duration.ofDays(1),
-        alarmGroups = alarmGroups,
-        alarms = alarms
-    )
-
     AppTheme(dynamicColor = false, darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
-                uiState = uiState,
+                uiState = SampleData.homeScreenUiState,
                 onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
