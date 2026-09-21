@@ -1,7 +1,6 @@
 package com.example.alarmoffsetapp.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -29,7 +27,6 @@ import com.example.alarmoffsetapp.R
 import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.dateTimeToDateString
-import java.time.LocalDateTime
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
@@ -41,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.dimensionResource
 import com.example.alarmoffsetapp.data.AlarmOffset
 import com.example.alarmoffsetapp.preview.SampleData
-import com.example.alarmoffsetapp.ui.theme.Shapes
 import com.example.alarmoffsetapp.ui.util.dateTimeToTimeString
 import com.example.alarmoffsetapp.ui.util.getAmOrPm
 import java.time.Duration

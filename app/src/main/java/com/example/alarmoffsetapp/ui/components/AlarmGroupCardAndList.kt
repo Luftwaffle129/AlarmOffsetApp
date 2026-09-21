@@ -27,13 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alarmoffsetapp.R
-import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.preview.SampleData
 import com.example.alarmoffsetapp.ui.theme.AppTheme
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 /**
  * Displays a list of alarm groups.

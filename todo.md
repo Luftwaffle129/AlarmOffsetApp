@@ -1,25 +1,27 @@
 
 UI:
- [ ] homescreen
- [ ] edit screen
- [ ] settings
+ - [X] homescreen
+ - [ ] edit alarm screen
+ - [ ] edit alarm group
+ - [ ] settings
 
-functionality
- [ ] navigation
- [ ] alarm api
+functionality:
+ - [ ] navigation
+ - [ ] alarm api
 
 database:
- [ ] create tables
- [ ] alarm group storing
- [ ] alarm storing
+ - [X] create tables
+ - [ ] alarm group storing
+ - [ ] alarm storing
 
 testing:
- [ ] ui
- [ ] navigation
- [ ] updates
- [ ] alarm creation
+ - [ ] ui
+ - [ ] navigation
+ - [ ] database
+ - [ ] updates
+ - [ ] alarm creation
 
 extras:
- [ ] easy delete, sort order and alarm grouping in home screen
- [ ] sorting alarm order on home screen
- [ ] disable alarm groups
+ - [ ] easy delete, sort order and alarm grouping in home screen
+ - [ ] sorting alarm order on home screen
+ - [ ] disable alarm groups

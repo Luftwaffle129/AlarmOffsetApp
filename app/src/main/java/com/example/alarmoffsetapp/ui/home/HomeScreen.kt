@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
@@ -38,6 +39,8 @@ import com.example.alarmoffsetapp.R
 import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.preview.SampleData
+import com.example.alarmoffsetapp.ui.components.AlarmCard
+import com.example.alarmoffsetapp.ui.components.AlarmGroupCard
 import com.example.alarmoffsetapp.ui.components.AlarmGroupList
 import com.example.alarmoffsetapp.ui.components.AlarmList
 import com.example.alarmoffsetapp.ui.theme.AppTheme
@@ -46,6 +49,7 @@ import com.example.alarmoffsetapp.ui.util.durationToString
 
 @Composable
 fun HomeScreen(
+    is24HourFormat: Boolean,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -53,6 +57,7 @@ fun HomeScreen(
 
     HomeBody(
         uiState = uiState.value,
+        is24HourFormat = is24HourFormat,
         onAddAlarm = viewModel::onAddAlarm,
         onAlarmClick = viewModel::onAlarmClick,
         onAlarmToggle = viewModel::onAlarmToggle,
@@ -65,6 +70,7 @@ fun HomeScreen(
 @Composable
 fun HomeBody(
     uiState: HomeScreenUiState,
+    is24HourFormat: Boolean,
     onAddAlarm: () -> Unit,
     onAlarmClick: (Alarm) -> Unit,
     onAlarmToggle: (Alarm) -> Unit,
@@ -86,6 +92,7 @@ fun HomeBody(
         item {
             NextAlarm(
                 nextAlarm = uiState.nextAlarm,
+                is24HourFormat = is24HourFormat,
                 timeUntilNextAlarm = uiState.timeUntilNextAlarm
             )
         }
@@ -96,11 +103,11 @@ fun HomeBody(
                 onTextClick = {},                   // TODO: Open only alarm groups menu
             )
         }
-        item {
-            AlarmGroupList(
-                alarmGroups = uiState.alarmGroups,
-                onAlarmGroupClick = onAlarmGroupClick,
-                onAlarmGroupToggle = onAlarmGroupToggle
+        items(uiState.alarmGroups) { alarmGroup ->
+            AlarmGroupCard(
+                alarmGroup = alarmGroup,
+                onClick = onAlarmGroupClick,
+                onToggle = onAlarmGroupToggle
             )
         }
         item {
@@ -111,12 +118,12 @@ fun HomeBody(
                 onIconClick = onAddAlarm
             )
         }
-        item {
-            AlarmList(
-                alarms = uiState.alarms,
-                onAlarmClick = onAlarmClick,
-                onAlarmToggle = onAlarmToggle,
-                is24Hour = true                     // TODO: handle 24 hour
+        items(uiState.alarms) { alarm ->
+            AlarmCard(
+                alarm = alarm,
+                onClick = onAlarmClick,
+                onToggle = onAlarmToggle,
+                is24Hour = is24HourFormat
             )
         }
     }
@@ -160,6 +167,7 @@ fun RegionTitle(
 @Composable
 fun NextAlarm(
     nextAlarm: LocalDateTime?,
+    is24HourFormat: Boolean,
     timeUntilNextAlarm: Duration?,
     modifier: Modifier = Modifier,
 ) {
@@ -197,7 +205,7 @@ fun NextAlarm(
                 Spacer(modifier.height(dimensionResource(R.dimen.padding_small)))
                 // exact time of next alarm
                 Text(
-                    text = dateTimeToString(nextAlarm),
+                    text = dateTimeToString(nextAlarm, is24HourFormat),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -213,6 +221,7 @@ fun HomeBodyLightPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
                 uiState = SampleData.homeScreenUiState,
+                is24HourFormat = false,
                 onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
@@ -230,6 +239,7 @@ fun HomeBodyDarkPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
                 uiState = SampleData.homeScreenUiState,
+                is24HourFormat = false,
                 onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
@@ -246,6 +256,7 @@ fun NextAlarmPreview() {
     AppTheme(dynamicColor = false, darkTheme = false) {
         NextAlarm(
             nextAlarm = LocalDateTime.now(),
+            is24HourFormat = false,
             timeUntilNextAlarm = Duration.ofDays(1)
         )
     }
@@ -257,6 +268,7 @@ fun NextAlarmPreviewEmpty() {
     AppTheme(dynamicColor = false, darkTheme = false) {
         NextAlarm(
             nextAlarm = null,
+            is24HourFormat = false,
             timeUntilNextAlarm = null
         )
     }
