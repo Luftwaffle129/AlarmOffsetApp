@@ -1,8 +1,12 @@
 package com.example.alarmoffsetapp.ui
 
-import androidx.lifecycle.createSavedStateHandle
+import android.app.Application
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.alarmoffsetapp.AlarmOffsetApplication
+import com.example.alarmoffsetapp.ui.EditAlarm.EditAlarmViewModel
 import com.example.alarmoffsetapp.ui.home.HomeScreenViewModel
 
 /**
@@ -11,7 +15,20 @@ import com.example.alarmoffsetapp.ui.home.HomeScreenViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            HomeScreenViewModel()
+            HomeScreenViewModel(
+                alarmOffsetApplication().container.alarmsRepository
+            )
+        }
+
+        initializer {
+            EditAlarmViewModel()
         }
     }
 }
+
+/**
+ * Extension function to queries for [Application] object and returns an instance of
+ * [AlarmOffsetApplication].
+ */
+fun CreationExtras.alarmOffsetApplication(): AlarmOffsetApplication =
+    (this[AndroidViewModelFactory.APPLICATION_KEY] as AlarmOffsetApplication)

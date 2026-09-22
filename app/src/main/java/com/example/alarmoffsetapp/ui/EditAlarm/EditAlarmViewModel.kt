@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-class EditAlarmScreenViewModel : ViewModel() {
+class EditAlarmViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(EditAlarmScreenUiState())
     val uiState: StateFlow<EditAlarmScreenUiState> = _uiState.asStateFlow()
 }

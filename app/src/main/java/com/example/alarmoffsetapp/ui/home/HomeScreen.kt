@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -67,7 +65,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeBody(
-    uiState: HomeScreenUiState,
+    uiState: HomeUiState,
     is24HourFormat: Boolean,
     onAddAlarm: () -> Unit,
     onAlarmClick: (Alarm) -> Unit,
@@ -98,19 +96,21 @@ fun HomeBody(
                 timeUntilNextAlarm = uiState.timeUntilNextAlarm
             )
         }
-        item {
-            RegionTitle(
-                title = R.string.alarm_groups,
-                icon = null,
-                onTextClick = {},                   // TODO: Open only alarm groups menu
-            )
-        }
-        items(uiState.alarmGroups) { alarmGroup ->
-            AlarmGroupCard(
-                alarmGroup = alarmGroup,
-                onClick = onAlarmGroupClick,
-                onToggle = onAlarmGroupToggle
-            )
+        if (uiState.alarmGroups.isNotEmpty()) {
+            item {
+                RegionTitle(
+                    title = R.string.alarm_groups,
+                    icon = null,
+                    onTextClick = {},                   // TODO: Open only alarm groups menu
+                )
+            }
+            items(uiState.alarmGroups) { alarmGroup ->
+                AlarmGroupCard(
+                    alarmGroup = alarmGroup,
+                    onClick = onAlarmGroupClick,
+                    onToggle = onAlarmGroupToggle
+                )
+            }
         }
         item {
             RegionTitle(
@@ -120,7 +120,7 @@ fun HomeBody(
                 onIconClick = onAddAlarm
             )
         }
-        items(uiState.alarms) { alarm ->
+        items(uiState.individualAlarms) { alarm ->
             AlarmCard(
                 alarm = alarm,
                 onClick = onAlarmClick,

@@ -13,6 +13,7 @@ data class Alarm(
     val scheduledDate: LocalDate?,
     val daysOfWeek: Set<DayOfWeek>,
     val isVibrating: Boolean,
+    val playsSound: Boolean,
     val isActive: Boolean,
     val canDismissOffsets: Boolean,
     val alarmOffsets: List<AlarmOffset>,
@@ -77,14 +78,14 @@ data class Alarm(
 
         } else { // alarm is repeating
 
-            if (daysOfWeek?.isEmpty() == true) {
+            if (daysOfWeek.isEmpty()) {
                 throw Exception("Alarm is repeating but has no repeating days") // TODO: update with better exception
             }
 
             val nextDateTime = now.with(baseTime)
 
             // if alarm on current day is active, return time
-            if (daysOfWeek?.contains(nextDateTime.dayOfWeek) == true ) {
+            if (daysOfWeek.contains(nextDateTime.dayOfWeek)) {
                 if (nextDateTime.isAfter(now)) return nextDateTime // if time of next alarm is in the future
 
                 // if time of the smallest alarm offset is in the future
@@ -98,7 +99,7 @@ data class Alarm(
             // return base time on next repeating day
             while (true) {
                 nextDateTime.plusDays(1)
-                if (daysOfWeek?.contains(nextDateTime.dayOfWeek) == true ) return nextDateTime // if day of week is not in the list of active days, continue
+                if (daysOfWeek.contains(nextDateTime.dayOfWeek)) return nextDateTime // if day of week is not in the list of active days, continue
             }
         }
     }

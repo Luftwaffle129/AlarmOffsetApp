@@ -3,12 +3,11 @@ package com.example.alarmoffsetapp.preview
 import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.data.AlarmOffset
-import com.example.alarmoffsetapp.ui.home.HomeScreenUiState
+import com.example.alarmoffsetapp.ui.home.HomeUiState
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.Date
 
 object SampleData {
     val alarmOffset = AlarmOffset(
@@ -25,8 +24,8 @@ object SampleData {
         isRepeating = false,
         scheduledDate = LocalDate.now(),
         daysOfWeek = setOf(),
-
         isVibrating = true,
+        playsSound = true,
         alarmOffsets = alarmOffsets,
         isActive = false,
         canDismissOffsets = true
@@ -40,10 +39,10 @@ object SampleData {
     )
     val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
 
-    val homeScreenUiState = HomeScreenUiState(
+    val homeScreenUiState = HomeUiState(
         nextAlarm = LocalDateTime.now(),
         timeUntilNextAlarm = Duration.ofDays(1),
         alarmGroups = alarmGroups,
-        alarms = alarms
+        individualAlarms = alarms
     )
 }

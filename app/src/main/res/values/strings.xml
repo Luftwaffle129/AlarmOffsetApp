@@ -5,4 +5,7 @@
     <string name="alarm_groups">Alarm Groups</string>
     <string name="alarms">Alarms</string>
     <string name="alarm_offsets">Alarm Offsets</string>
+    <string name="home_screen">Home Screen</string>
+    <string name="edit_alarm">Edit Alarm</string>
+    <string name="add_alarm">Add Alarm</string>
 </resources>

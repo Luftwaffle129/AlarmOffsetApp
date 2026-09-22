@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.alarmoffsetapp.data.AppContainer
 import com.example.alarmoffsetapp.data.AppDataContainer
 
-class AlarmApplication : Application() {
+class AlarmOffsetApplication : Application() {
 
     lateinit var container: AppContainer
 

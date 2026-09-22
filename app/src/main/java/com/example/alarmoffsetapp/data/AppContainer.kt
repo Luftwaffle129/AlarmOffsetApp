@@ -13,11 +13,11 @@ interface AppContainer {
 }
 
 /**
- * [AppContainer] implementation that provides instance of [OfflineItemsRepository]
+ * [AppContainer] implementation that provides instance of [OfflineAlarmsRepository]
  */
 class AppDataContainer(private val context: Context) : AppContainer {
     /**
-     * Implementation for [ItemsRepository]
+     * Implementation for [AlarmsRepository]
      */
     override val alarmsRepository: AlarmsRepository by lazy {
         OfflineAlarmsRepository(AlarmsDatabase.getDatabase(context).alarmDao())
