@@ -11,7 +11,7 @@ data class Alarm(
     val baseTime: LocalTime,
     val isRepeating: Boolean,
     val scheduledDate: LocalDate?,
-    val daysOfWeek: Set<DayOfWeek>?,
+    val daysOfWeek: Set<DayOfWeek>,
     val isVibrating: Boolean,
     val isActive: Boolean,
     val canDismissOffsets: Boolean,
@@ -41,14 +41,14 @@ data class Alarm(
             val nextDateTime = now.with(baseTime)
 
             // if alarm on current day is active and time of next alarm is in the future, return time
-            if (daysOfWeek?.contains(nextDateTime.dayOfWeek) == true && nextDateTime.isAfter(now)) {
+            if (daysOfWeek.contains(nextDateTime.dayOfWeek) && nextDateTime.isAfter(now)) {
                 return nextDateTime
             }
 
             // return base time on next repeating day
             while (true) {
                 nextDateTime.plusDays(1)
-                if (daysOfWeek?.contains(nextDateTime.dayOfWeek) == true ) return nextDateTime // if day of week is not in the list of active days, continue
+                if (daysOfWeek.contains(nextDateTime.dayOfWeek)) return nextDateTime // if day of week is not in the list of active days, continue
             }
         }
     }

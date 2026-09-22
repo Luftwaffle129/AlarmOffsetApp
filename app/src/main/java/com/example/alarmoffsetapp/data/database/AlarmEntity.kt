@@ -13,7 +13,7 @@ data class AlarmEntity (
     @ColumnInfo(name = "time") val baseTime: Int, // seconds since midnight
     @ColumnInfo(name = "is_repeating") val isRepeating: Boolean,
     @ColumnInfo(name = "next_time")  val scheduledDate: String?, // date of alarm
-    @ColumnInfo(name = "days_of_week")  val daysOfWeek: Byte?, // bitmask of days of week
+    @ColumnInfo(name = "days_of_week")  val daysOfWeek: Byte, // bitmask of days of week
     @ColumnInfo(name = "is_vibrating") val isVibrating: Boolean,
     @ColumnInfo(name = "is_active") val isActive: Boolean,
     @ColumnInfo(name = "can_snooze_offsets")  val canDismissOffsets: Boolean

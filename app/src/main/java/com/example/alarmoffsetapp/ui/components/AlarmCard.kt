@@ -43,31 +43,6 @@ import com.example.alarmoffsetapp.ui.util.getAmOrPm
 import java.time.Duration
 
 @Composable
-fun AlarmList(
-    alarms: List<Alarm>,
-    onAlarmClick: (Alarm) -> Unit,
-    onAlarmToggle: (Alarm) -> Unit,
-    modifier: Modifier = Modifier,
-    is24Hour: Boolean,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        alarms.forEach { alarm ->
-            AlarmCard(
-                alarm = alarm,
-                onClick = onAlarmClick,
-                onToggle = onAlarmToggle,
-                is24Hour = is24Hour
-            )
-        }
-    }
-}
-
-@Composable
 fun AlarmCard(
     onClick: (Alarm) -> Unit,
     onToggle: (Alarm) -> Unit,
@@ -236,19 +211,6 @@ fun AlarmCardPreviewLight() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AlarmListPreviewLight() {
-    AppTheme(dynamicColor = false, darkTheme = false) {
-        AlarmList(
-            alarms = SampleData.alarms,
-            onAlarmClick = {},
-            onAlarmToggle = {},
-            is24Hour = false
-        )
-    }
-}
-
 @Preview
 @Composable
 fun AlarmCardPreviewDark() {
@@ -260,21 +222,5 @@ fun AlarmCardPreviewDark() {
             onToggle = {},
             is24Hour = false
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AlarmListPreviewDark() {
-    AppTheme(dynamicColor = false, darkTheme = true) {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            AlarmList(
-                alarms = SampleData.alarms,
-                onAlarmClick = {},
-                onAlarmToggle = {},
-                is24Hour = false
-            )
-        }
-
     }
 }

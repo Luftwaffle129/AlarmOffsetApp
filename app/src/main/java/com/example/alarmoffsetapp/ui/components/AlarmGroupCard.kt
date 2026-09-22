@@ -2,7 +2,6 @@ package com.example.alarmoffsetapp.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -31,36 +29,6 @@ import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.preview.SampleData
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 
-/**
- * Displays a list of alarm groups.
- *
- * @param alarmGroups the list of alarm groups to display
- * @param onAlarmGroupClick the callback to invoke when an alarm group is clicked
- * @param onAlarmGroupToggle the callback to invoke when the toggle for an alarm group is clicked
- * @param modifier the modifier to apply to this layout
- */
-@Composable
-fun AlarmGroupList(
-    alarmGroups: List<AlarmGroup>,
-    onAlarmGroupClick: (AlarmGroup) -> Unit,
-    onAlarmGroupToggle: (AlarmGroup) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        alarmGroups.forEach { alarmGroup ->
-            AlarmGroupCard(
-                alarmGroup = alarmGroup,
-                onClick = onAlarmGroupClick,
-                onToggle = onAlarmGroupToggle
-            )
-        }
-    }
-}
 /**
  * Displays a single alarm group.
  *
@@ -176,18 +144,6 @@ fun AlarmGroupCardPreviewLight() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AlarmGroupListPreviewLight() {
-    AppTheme(dynamicColor = false, darkTheme = false) {
-        AlarmGroupList(
-            alarmGroups = SampleData.alarmGroups,
-            onAlarmGroupClick = {},
-            onAlarmGroupToggle = {}
-        )
-    }
-}
-
 @Preview
 @Composable
 fun AlarmGroupCardPreviewDark() {
@@ -198,20 +154,5 @@ fun AlarmGroupCardPreviewDark() {
             onClick = {},
             onToggle = {}
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AlarmGroupListPreviewDark() {
-    AppTheme(dynamicColor = false, darkTheme = true) {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            AlarmGroupList(
-                alarmGroups = SampleData.alarmGroups,
-                onAlarmGroupClick = {},
-                onAlarmGroupToggle = {}
-            )
-        }
-
     }
 }

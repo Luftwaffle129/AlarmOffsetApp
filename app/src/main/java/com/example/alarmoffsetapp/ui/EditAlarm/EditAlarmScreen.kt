@@ -7,13 +7,18 @@ import android.annotation.SuppressLint
 import android.widget.TimePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +40,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
 import androidx.compose.ui.unit.sp
+import com.example.alarmoffsetapp.data.Alarm
+import com.example.alarmoffsetapp.preview.SampleData.alarm
+import com.example.alarmoffsetapp.ui.components.DayPeriodWheelPicker
+import com.example.alarmoffsetapp.ui.components.TimeWheelPicker
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -43,121 +52,112 @@ import kotlin.math.abs
 
 @Composable
 fun EditAlarmScreen(
+    is24HourFormat: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
+    EditAlarmBody(
+        is24HourFormat = is24HourFormat,
         modifier = modifier
-    ) {
-
-    }
+    )
 }
 
 @Composable
 fun EditAlarmBody(
-    modifier: Modifier
-) {
-
-}
-
-@Composable
-fun UnitTimePicker(
-    startValue: Int,
-    maxValue: Int,
-    onSelected: (Int) -> Unit,
+    is24HourFormat: Boolean,
+    onHourSelected: (Int) -> Unit,
+    onMinuteSelected: (Int) -> Unit,
+    onTimePeriodSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val middleIndex = Int.MAX_VALUE / 2 // get middle index for initialization
-    var currentIndex by remember { mutableIntStateOf(middleIndex) }
-
-    val baseFontSize = 48f // base font size before scaling for middle, needs to not exceed box dimensions
-
-    // remember list state between recompositions
-    val listState = rememberLazyListState(
-        initialFirstVisibleItemIndex = middleIndex - (middleIndex % maxValue) + startValue
-    )
-
-    val flingBehavior = rememberSnapFlingBehavior(listState)
-
-    // Flow of middle value
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.layoutInfo.visibleItemsInfo
-                .minByOrNull { item ->
-                    abs(
-                        item.offset +
-                                item.size / 2 -
-                                listState.layoutInfo.viewportEndOffset / 2
-                    )
-                }
-                ?.index
-        }
-            .filterNotNull()
-            .distinctUntilChanged()
-            .collect { selected ->
-                currentIndex = selected
-                onSelected(selected)
-            }
-    }
-
     LazyColumn(
-        modifier = modifier.height(270.dp),
-        state = listState,
-        flingBehavior = flingBehavior,
-        contentPadding = PaddingValues(vertical = 90.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
     ) {
-
-        val layoutInfo = listState.layoutInfo
-
-        items(Int.MAX_VALUE) { value ->
-            val itemInfo = layoutInfo.visibleItemsInfo
-                .firstOrNull { it.index == value }
-
-            val center =
-                (layoutInfo.viewportStartOffset +
-                        layoutInfo.viewportEndOffset) / 2f
-
-            val distance = itemInfo?.let {
-                abs(
-                    (it.offset + it.size / 2f) - center
-                )
-            } ?: Float.MAX_VALUE
-
-            val progress = (1f - distance / 100f)
-                .coerceIn(0f, 1f)
-
-            val fontSize = baseFontSize + baseFontSize * progress * 0.5f
-            Box(
-                modifier = Modifier
-                    .height(90.dp)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "%02d".format(value % maxValue),
-                    style = MaterialTheme.typography.displayLarge,
-                    fontSize = fontSize.sp
-                )
-            }
+        item {
+            TimePicker(
+                startHour = 2,
+                startMinute = 2,
+                is24HourFormat = is24HourFormat,
+                onHourSelected = onHourSelected,
+                onMinuteSelected = onMinuteSelected,
+                onTimePeriodSelected = onTimePeriodSelected
+            )
         }
     }
 }
 
-@SuppressLint("DefaultLocale") // Locale is not used as wheel picker is for the minutes in hh:mm
-@Preview(showBackground = true)
 @Composable
-fun WheelPicker2Preview() {
+fun TimePicker(
+    startHour: Int,
+    startMinute: Int,
+    is24HourFormat: Boolean,
+    onHourSelected: (Int) -> Unit,
+    onMinuteSelected: (Int) -> Unit,
+    onTimePeriodSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val middleIndex = Int.MAX_VALUE / 2
+
+    val maxHours = if (is24HourFormat) 24 else 12
+
+    // remember list states between recompositions
+    val hourListState = rememberLazyListState(
+        initialFirstVisibleItemIndex = middleIndex - (middleIndex % maxHours) + startHour
+    )
+    val minuteListState = rememberLazyListState(
+        initialFirstVisibleItemIndex = middleIndex - (middleIndex % 60) + startMinute
+    )
+    val dayPeriodListState = rememberLazyListState(
+        initialFirstVisibleItemIndex = if (startHour in 12..23) 1 else 0
+    )
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TimeWheelPicker(
+            maxValue = 24,
+            listState = hourListState,
+            onSelected = onHourSelected,
+            isTwoDigits = false,
+            is12HourFormat = true
+        )
+        Text(
+            text = ":",
+            style = MaterialTheme.typography.displayLarge,
+            fontSize = 64.sp
+        )
+        TimeWheelPicker(
+            maxValue = 60,
+            listState = minuteListState,
+            onSelected = onMinuteSelected,
+        )
+        if (!is24HourFormat) {
+            DayPeriodWheelPicker(
+                listState = dayPeriodListState,
+                onSelected = onTimePeriodSelected
+            )
+        }
+    }
+}
+
+
+@Preview(showBackground = false)
+@Composable
+fun TimePickerLightPreview() {
     AppTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier,
             color = MaterialTheme.colorScheme.background
         ) {
             Box {
-                UnitTimePicker(
-                    startValue = 0,
-                    maxValue = 60,
-                    onSelected = {},
-                    modifier = Modifier.padding(top = 64.dp)
+                TimePicker(
+                    startHour = 2,
+                    startMinute = 2,
+                    is24HourFormat = false,
+                    onHourSelected = {},
+                    onMinuteSelected = {},
+                    onTimePeriodSelected = {}
                 )
             }
         }

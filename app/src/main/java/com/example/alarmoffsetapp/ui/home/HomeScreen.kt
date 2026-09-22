@@ -79,7 +79,11 @@ fun HomeBody(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(
+            start = dimensionResource(R.dimen.padding_medium),
+            top = dimensionResource(R.dimen.padding_medium),
+            end = dimensionResource(R.dimen.padding_medium),
+        ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item{
