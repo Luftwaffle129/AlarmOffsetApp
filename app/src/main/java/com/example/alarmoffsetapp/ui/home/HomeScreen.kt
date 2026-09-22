@@ -41,8 +41,6 @@ import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.preview.SampleData
 import com.example.alarmoffsetapp.ui.components.AlarmCard
 import com.example.alarmoffsetapp.ui.components.AlarmGroupCard
-import com.example.alarmoffsetapp.ui.components.AlarmGroupList
-import com.example.alarmoffsetapp.ui.components.AlarmList
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.dateTimeToString
 import com.example.alarmoffsetapp.ui.util.durationToString

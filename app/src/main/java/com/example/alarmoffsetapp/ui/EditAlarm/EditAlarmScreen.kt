@@ -4,28 +4,38 @@ import android.R.attr.alpha
 import android.R.attr.scaleX
 import android.R.attr.scaleY
 import android.annotation.SuppressLint
+import android.content.Context
 import android.widget.TimePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,6 +58,7 @@ import com.example.alarmoffsetapp.ui.components.TimeWheelPicker
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import java.time.DayOfWeek
 import java.util.Locale
 import kotlin.math.abs
 
@@ -54,15 +66,23 @@ import kotlin.math.abs
 fun EditAlarmScreen(
     is24HourFormat: Boolean,
     modifier: Modifier = Modifier,
+    viewModel: EditAlarmScreenViewModel = EditAlarmScreenViewModel()
 ) {
+    val uiState = viewModel.uiState.collectAsState()
+
     EditAlarmBody(
+        uiState = uiState.value,
         is24HourFormat = is24HourFormat,
+        onHourSelected = {},
+        onMinuteSelected = {},
+        onTimePeriodSelected = {},
         modifier = modifier
     )
 }
 
 @Composable
 fun EditAlarmBody(
+    uiState: EditAlarmScreenUiState,
     is24HourFormat: Boolean,
     onHourSelected: (Int) -> Unit,
     onMinuteSelected: (Int) -> Unit,
@@ -74,8 +94,8 @@ fun EditAlarmBody(
     ) {
         item {
             TimePicker(
-                startHour = 2,
-                startMinute = 2,
+                startHour = uiState.hour,
+                startMinute = uiState.minute,
                 is24HourFormat = is24HourFormat,
                 onHourSelected = onHourSelected,
                 onMinuteSelected = onMinuteSelected,
@@ -141,6 +161,69 @@ fun TimePicker(
     }
 }
 
+@Composable
+fun IntervalSelector(
+    daysOfWeek: Set<DayOfWeek>,
+    onCalendarClicked: () -> Unit,
+    onDayOfWeekCheckedChange: (DayOfWeek, Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "test")
+            IconButton(
+                onClick = onCalendarClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.CalendarMonth,
+                    contentDescription = null,
+                    modifier = modifier.size(24.dp)
+                )
+            }
+        }
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            items(7) { value ->
+                val dayOfWeek = DayOfWeek.of(value + 1)
+
+                IconToggleButton(
+                    checked = daysOfWeek.contains(dayOfWeek),
+                    onCheckedChange = {  onDayOfWeekCheckedChange(dayOfWeek, it) }
+                ) {
+                    Text(
+                        text = DayOfWeek.of(value + 1).name.substring(0..0),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 24.sp,
+                    )
+                }
+
+            }
+        }
+    }
+}
+@Preview
+@Composable
+fun IntervalSelectorLightPreview() {
+    AppTheme {
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.background
+        ) {
+            IntervalSelector(
+                daysOfWeek = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+                onDayOfWeekCheckedChange = { dayOfWeek, isChecked -> },
+                onCalendarClicked = {},
+            )
+        }
+    }
+}
 
 @Preview(showBackground = false)
 @Composable
