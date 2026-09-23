@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class Alarm(
-    val id: Int,
+    val id: Long,
     val name: String,
     val baseTime: LocalTime,
     val isRepeating: Boolean,

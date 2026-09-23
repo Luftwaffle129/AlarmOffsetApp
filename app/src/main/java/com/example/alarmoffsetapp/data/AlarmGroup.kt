@@ -1,7 +1,7 @@
 package com.example.alarmoffsetapp.data
 
 data class AlarmGroup (
-    val id: Int,
+    val id: Long,
     val name: String,
     val alarms: List<Alarm>,
     val isActive: Boolean

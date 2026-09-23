@@ -1,4 +1,4 @@
-package com.example.alarmoffsetapp.ui.EditAlarm
+package com.example.alarmoffsetapp.ui.editAlarm
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,16 +24,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.alarmoffsetapp.ui.AppViewModelProvider
 import com.example.alarmoffsetapp.ui.components.DayPeriodWheelPicker
 import com.example.alarmoffsetapp.ui.components.TimeWheelPicker
+import com.example.alarmoffsetapp.ui.navigation.NavigationDestination
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import java.time.DayOfWeek
 
+object EditAlarmDestination : NavigationDestination {
+    override val route = "home"
+    const val alarmIdArg = "alarmId"
+
+    val routeWithArgs = "${route}/{$alarmIdArg}"
+}
 @Composable
 fun EditAlarmScreen(
     is24HourFormat: Boolean,
     modifier: Modifier = Modifier,
-    viewModel: EditAlarmViewModel = EditAlarmViewModel()
+    viewModel: EditAlarmViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
@@ -49,7 +58,7 @@ fun EditAlarmScreen(
 
 @Composable
 fun EditAlarmBody(
-    uiState: EditAlarmScreenUiState,
+    uiState: EditAlarmUiState,
     is24HourFormat: Boolean,
     onHourSelected: (Int) -> Unit,
     onMinuteSelected: (Int) -> Unit,

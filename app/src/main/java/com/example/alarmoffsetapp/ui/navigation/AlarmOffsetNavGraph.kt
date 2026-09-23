@@ -1,17 +1,12 @@
 package com.example.alarmoffsetapp.ui.navigation
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.alarmoffsetapp.R
+import com.example.alarmoffsetapp.ui.editAlarm.EditAlarmScreen
 import com.example.alarmoffsetapp.ui.home.HomeScreen
 
 //enum class AlarmOffsetScreen(@StringRes val title: Int) {
@@ -39,8 +34,20 @@ fun AlarmOffsetNavHost(
         composable(route = AlarmOffsetScreen.HomeScreen.name) {
             HomeScreen(
                 is24HourFormat = true,
+                navigateToAlarmAdd = { navController.navigate(AlarmOffsetScreen.AddAlarm.name) },
+                navigateToAlarmEdit = { navController.navigate(AlarmOffsetScreen.EditAlarm.name) },
+                navigateToGroupAlarm = {},
                 modifier = Modifier
             )
+        }
+        composable(route = AlarmOffsetScreen.AddAlarm.name) {
+            EditAlarmScreen(
+                is24HourFormat = true,
+                modifier = Modifier
+            )
+        }
+        composable(route = AlarmOffsetScreen.EditAlarm.name) {
+
         }
     }
 }

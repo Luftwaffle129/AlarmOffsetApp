@@ -3,6 +3,8 @@ package com.example.alarmoffsetapp.data.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.alarmoffsetapp.data.AlarmOffset
+import java.time.Duration
 
 @Entity(tableName = "alarm_offsets")
 data class AlarmOffsetEntity(
@@ -11,4 +13,12 @@ data class AlarmOffsetEntity(
     @ColumnInfo(name = "alarm_id") val alarmId: Long,
     @ColumnInfo(name = "offset") val offset: Int, // limited to up to a day (86400 seconds)
     @ColumnInfo(name = "isActive")val isActive: Boolean
-)
+) {
+    fun toAlarmOffset(): AlarmOffset {
+        return AlarmOffset(
+            id = id,
+            offset = Duration.ofSeconds(offset.toLong()),
+            isActive = isActive
+        )
+    }
+}

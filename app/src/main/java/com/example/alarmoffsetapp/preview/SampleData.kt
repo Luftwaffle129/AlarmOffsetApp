@@ -11,6 +11,7 @@ import java.time.LocalTime
 
 object SampleData {
     val alarmOffset = AlarmOffset(
+        id = 0,
         offset = Duration.ofMinutes(10),
         isActive = true
     )
@@ -43,6 +44,6 @@ object SampleData {
         nextAlarm = LocalDateTime.now(),
         timeUntilNextAlarm = Duration.ofDays(1),
         alarmGroups = alarmGroups,
-        individualAlarms = alarms
+        alarms = alarms
     )
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.alarmoffsetapp.AlarmOffsetApplication
-import com.example.alarmoffsetapp.ui.EditAlarm.EditAlarmViewModel
+import com.example.alarmoffsetapp.ui.editAlarm.EditAlarmViewModel
 import com.example.alarmoffsetapp.ui.home.HomeScreenViewModel
 
 /**
@@ -19,9 +19,10 @@ object AppViewModelProvider {
                 alarmOffsetApplication().container.alarmsRepository
             )
         }
-
         initializer {
-            EditAlarmViewModel()
+            EditAlarmViewModel(
+                alarmOffsetApplication().container.alarmsRepository
+            )
         }
     }
 }

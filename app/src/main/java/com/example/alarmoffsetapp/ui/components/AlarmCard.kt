@@ -200,7 +200,6 @@ fun AlarmCard(
 @Composable
 fun AlarmCardPreviewLight() {
     AppTheme(dynamicColor = false, darkTheme = false) {
-        val alarmOffset = AlarmOffset(offset = Duration.ZERO, isActive = true)
 
         AlarmCard(
             alarm = SampleData.alarm,
@@ -214,7 +213,6 @@ fun AlarmCardPreviewLight() {
 @Preview
 @Composable
 fun AlarmCardPreviewDark() {
-    val alarmOffset = AlarmOffset(offset = Duration.ZERO, isActive = true)
     AppTheme(dynamicColor = false, darkTheme = true) {
         AlarmCard(
             alarm = SampleData.alarm,

@@ -39,13 +39,21 @@ import com.example.alarmoffsetapp.data.AlarmGroup
 import com.example.alarmoffsetapp.preview.SampleData
 import com.example.alarmoffsetapp.ui.components.AlarmCard
 import com.example.alarmoffsetapp.ui.components.AlarmGroupCard
+import com.example.alarmoffsetapp.ui.navigation.NavigationDestination
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.dateTimeToString
 import com.example.alarmoffsetapp.ui.util.durationToString
 
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+}
+
 @Composable
 fun HomeScreen(
     is24HourFormat: Boolean,
+    navigateToAlarmAdd: () -> Unit,
+    navigateToAlarmEdit: (Alarm) -> Unit,
+    navigateToGroupAlarm: (AlarmGroup) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -54,10 +62,10 @@ fun HomeScreen(
     HomeBody(
         uiState = uiState.value,
         is24HourFormat = is24HourFormat,
-        onAddAlarm = viewModel::onAddAlarm,
-        onAlarmClick = viewModel::onAlarmClick,
+        onAddAlarm = navigateToAlarmAdd,
+        onAlarmClick = navigateToAlarmEdit,
         onAlarmToggle = viewModel::onAlarmToggle,
-        onAlarmGroupClick = viewModel::onAlarmGroupClick,
+        onAlarmGroupClick = navigateToGroupAlarm,
         onAlarmGroupToggle = viewModel::onAlarmGroupToggle,
         modifier = modifier
     )
@@ -120,7 +128,7 @@ fun HomeBody(
                 onIconClick = onAddAlarm
             )
         }
-        items(uiState.individualAlarms) { alarm ->
+        items(uiState.alarms) { alarm ->
             AlarmCard(
                 alarm = alarm,
                 onClick = onAlarmClick,

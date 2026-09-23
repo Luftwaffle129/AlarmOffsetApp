@@ -13,6 +13,9 @@ interface AlarmDao {
     @Insert
     suspend fun insertAlarmOffsets(offsets: List<AlarmOffsetEntity>)
 
+    @Query("SELECT * FROM alarms WHERE id = :id")
+    fun getAlarm(id: Long): Flow<AlarmWithOffsets>
+
     @Query("SELECT * FROM alarms ORDER BY time ASC")
     fun getAllAlarms(): Flow<List<AlarmWithOffsets>>
 
