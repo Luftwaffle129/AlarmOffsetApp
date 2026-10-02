@@ -44,10 +44,10 @@ fun EditAlarmScreen(
     modifier: Modifier = Modifier,
     viewModel: EditAlarmViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState
 
     EditAlarmBody(
-        uiState = uiState.value,
+        uiState = uiState,
         is24HourFormat = is24HourFormat,
         onHourSelected = {},
         onMinuteSelected = {},

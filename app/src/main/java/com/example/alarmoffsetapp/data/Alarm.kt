@@ -35,7 +35,7 @@ data class Alarm(
 
         } else { // alarm is repeating
 
-            if (daysOfWeek?.isEmpty() == true) {
+            if (daysOfWeek.isEmpty()) {
                 throw Exception("Alarm is repeating but has no repeating days") // TODO: update with better exception
             }
 

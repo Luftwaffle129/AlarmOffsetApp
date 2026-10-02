@@ -12,6 +12,7 @@ room = "2.8.5"
 ksp = "2.2.10-2.0.2"
 navigationRuntimeKtx = "2.10.1"
 navigationCompose = "2.10.1"
+navigationRuntimeKtxVersion = "2.10.2"
 
 
 [libraries]
@@ -37,6 +38,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtxVersion" }
 
 
 [plugins]

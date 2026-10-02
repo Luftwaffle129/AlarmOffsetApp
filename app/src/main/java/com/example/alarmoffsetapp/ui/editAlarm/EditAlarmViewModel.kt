@@ -19,16 +19,14 @@ class EditAlarmViewModel(
     private val alarmsRepository: AlarmsRepository
 ) : ViewModel() {
 
- mutableStateOf(EditAlarmUiState())
+    var uiState by mutableStateOf(EditAlarmUiState())
         private set
 
     private val alarmId: Long? = savedStateHandle[EditAlarmDestination.alarmIdArg]
-    var uiState by
 
     init {
         viewModelScope.launch {
-            uiState =
-                .toItemUiState()
+            uiState = EditAlarmUiState() // placeholder
         }
     }
 }

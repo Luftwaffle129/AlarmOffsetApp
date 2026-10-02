@@ -32,8 +32,13 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
             initialValue = HomeUiState()
         )
 
-    fun getTimeUntilNextAlarm(): Duration {
-        return Duration.between(uiState.value.nextAlarm, LocalDateTime.now())
+    fun getTimeUntilNextAlarm(): Duration? {
+        return if (uiState.value.nextAlarm != null) { // required as java Duration does not support nulls
+            Duration.between(uiState.value.nextAlarm, LocalDateTime.now())
+        } else {
+            null
+        }
+
     }
 
     fun onAlarmGroupToggle(alarmGroup: AlarmGroup) {

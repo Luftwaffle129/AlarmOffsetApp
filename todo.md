@@ -1,6 +1,6 @@
 
 UI:
- - [X] homescreen
+ - [ ] homescreen
  - [ ] edit alarm screen
  - [ ] edit alarm group
  - [ ] settings

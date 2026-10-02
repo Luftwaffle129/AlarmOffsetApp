@@ -1,27 +1,39 @@
 package com.example.alarmoffsetapp.ui.home
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -53,7 +65,9 @@ fun HomeScreen(
     is24HourFormat: Boolean,
     navigateToAlarmAdd: () -> Unit,
     navigateToAlarmEdit: (Alarm) -> Unit,
-    navigateToGroupAlarm: (AlarmGroup) -> Unit,
+    navigateToGroupAlarmEdit: (AlarmGroup) -> Unit,
+    navigateToViewGroupAlarms: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -65,8 +79,10 @@ fun HomeScreen(
         onAddAlarm = navigateToAlarmAdd,
         onAlarmClick = navigateToAlarmEdit,
         onAlarmToggle = viewModel::onAlarmToggle,
-        onAlarmGroupClick = navigateToGroupAlarm,
+        onAlarmGroupClick = navigateToGroupAlarmEdit,
         onAlarmGroupToggle = viewModel::onAlarmGroupToggle,
+        onOpenAlarmGroupScreen = navigateToViewGroupAlarms,
+        onSettingsClick = navigateToSettings,
         modifier = modifier
     )
 }
@@ -80,8 +96,12 @@ fun HomeBody(
     onAlarmToggle: (Alarm) -> Unit,
     onAlarmGroupClick: (AlarmGroup) -> Unit,
     onAlarmGroupToggle: (AlarmGroup) -> Unit,
+    onOpenAlarmGroupScreen: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var expandedOptionsMenu by remember { mutableStateOf(false) }
+
     LazyColumn(
         modifier = modifier.padding(
             start = dimensionResource(R.dimen.padding_medium),
@@ -94,7 +114,15 @@ fun HomeBody(
             RegionTitle(
                 title = R.string.next_alarm,
                 icon = Icons.Outlined.MoreVert,
-                onIconClick = {}                    // TODO: settings bar
+                onIconClick = { expandedOptionsMenu = true },
+                dropDownMenu = {
+                    OptionsDropDownMenu(
+                        expanded = expandedOptionsMenu,
+                        onDismissRequest = { expandedOptionsMenu = false },
+                        onAlarmGroupsClick = onOpenAlarmGroupScreen,
+                        onSettingsClick = onSettingsClick,
+                    )
+                }
             )
         }
         item {
@@ -109,7 +137,7 @@ fun HomeBody(
                 RegionTitle(
                     title = R.string.alarm_groups,
                     icon = null,
-                    onTextClick = {},                   // TODO: Open only alarm groups menu
+                    onTextClick = onOpenAlarmGroupScreen,
                 )
             }
             items(uiState.alarmGroups) { alarmGroup ->
@@ -124,7 +152,7 @@ fun HomeBody(
             RegionTitle(
                 title = R.string.alarms,
                 icon = Icons.Outlined.Add,
-                onTextClick = {},                   // TODO: Open only alarm groups menu
+                onTextClick = {},
                 onIconClick = onAddAlarm
             )
         }
@@ -143,9 +171,10 @@ fun HomeBody(
 fun RegionTitle(
     @StringRes title: Int,
     icon: ImageVector?,
+    modifier: Modifier = Modifier,
     onTextClick: () -> Unit = {},
     onIconClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    dropDownMenu: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -155,21 +184,78 @@ fun RegionTitle(
     ) {
         Text(
             text = stringResource(title),
+            modifier = Modifier
+                .clickable(enabled = onTextClick != {}) { onTextClick() },
             style = MaterialTheme.typography.labelLarge,
             fontSize = 20.sp
         )
         Row(
-            modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small))
-                )
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                        //.padding(end = dimensionResource(R.dimen.padding_small))
+                        ,
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            //.padding(end = dimensionResource(R.dimen.padding_small))
+                            .clickable(enabled = onIconClick != {}) { onIconClick() },
+                    )
+                    dropDownMenu()
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun OptionsDropDownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onAlarmGroupsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box (
+//        modifier = modifier
+//            .padding(dimensionResource(R.dimen.padding_medium)),
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = Modifier
+                //.padding(dimensionResource(R.dimen.padding_medium))
+                ,
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(R.string.alarm_groups),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 16.sp
+                    )
+                },
+                onClick = onAlarmGroupsClick,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(R.string.settings),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 16.sp
+                    )
+                },
+                onClick = onSettingsClick
+            )
         }
     }
 }
@@ -236,7 +322,9 @@ fun HomeBodyLightPreview() {
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 onAlarmGroupClick = {},
-                onAlarmGroupToggle = {}
+                onAlarmGroupToggle = {},
+                onOpenAlarmGroupScreen = {},
+                onSettingsClick = {}
             )
         }
     }
@@ -254,7 +342,9 @@ fun HomeBodyDarkPreview() {
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 onAlarmGroupClick = {},
-                onAlarmGroupToggle = {}
+                onAlarmGroupToggle = {},
+                onOpenAlarmGroupScreen = {},
+                onSettingsClick = {}
             )
         }
     }
@@ -281,5 +371,26 @@ fun NextAlarmPreviewEmpty() {
             is24HourFormat = false,
             timeUntilNextAlarm = null
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OptionsDropDownMenuPreview() {
+    AppTheme(dynamicColor = false, darkTheme = false) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            OptionsDropDownMenu(
+                expanded = true,
+                onDismissRequest = {},
+                onAlarmGroupsClick = {},
+                onSettingsClick = {}
+            )
+        }
     }
 }

@@ -6,7 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.alarmoffsetapp.ui.editAlarm.EditAlarmDestination
 import com.example.alarmoffsetapp.ui.editAlarm.EditAlarmScreen
+import com.example.alarmoffsetapp.ui.home.HomeDestination
 import com.example.alarmoffsetapp.ui.home.HomeScreen
 
 //enum class AlarmOffsetScreen(@StringRes val title: Int) {
@@ -15,12 +17,6 @@ import com.example.alarmoffsetapp.ui.home.HomeScreen
 //    AddAlarm(title = R.string.add_alarm),
 //}
 
-enum class AlarmOffsetScreen() {
-    HomeScreen,
-    EditAlarm,
-    AddAlarm,
-}
-
 @Composable
 fun AlarmOffsetNavHost(
     modifier: Modifier = Modifier,
@@ -28,26 +24,28 @@ fun AlarmOffsetNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AlarmOffsetScreen.HomeScreen.name,
+        startDestination = HomeDestination.route,
         modifier = modifier
     ) {
-        composable(route = AlarmOffsetScreen.HomeScreen.name) {
+        composable(route = HomeDestination.route) {
             HomeScreen(
                 is24HourFormat = true,
-                navigateToAlarmAdd = { navController.navigate(AlarmOffsetScreen.AddAlarm.name) },
-                navigateToAlarmEdit = { navController.navigate(AlarmOffsetScreen.EditAlarm.name) },
-                navigateToGroupAlarm = {},
+                navigateToAlarmAdd = { EditAlarmDestination.route },
+                navigateToAlarmEdit = { EditAlarmDestination.routeWithArgs },
+                navigateToGroupAlarmEdit = {  },
+                navigateToViewGroupAlarms = {  },
+                navigateToSettings = {  },
                 modifier = Modifier
             )
         }
-        composable(route = AlarmOffsetScreen.AddAlarm.name) {
-            EditAlarmScreen(
-                is24HourFormat = true,
-                modifier = Modifier
-            )
-        }
-        composable(route = AlarmOffsetScreen.EditAlarm.name) {
-
-        }
+//        composable(route = EditAlarmDestination.route) {
+//            EditAlarmScreen(
+//                is24HourFormat = true,
+//                modifier = Modifier
+//            )
+//        }
+//        composable(route = EditAlarmDestination.routeWithArgs) {
+//
+//        }
     }
 }
