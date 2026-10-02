@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.alarmoffsetapp.data.database.data.AlarmEntity
+import com.example.alarmoffsetapp.data.database.data.AlarmGroupEntity
+import com.example.alarmoffsetapp.data.database.data.AlarmOffsetEntity
 
 @Database(entities = [AlarmGroupEntity::class, AlarmEntity::class, AlarmOffsetEntity::class], version = 1, exportSchema = false)
 abstract class AlarmsDatabase : RoomDatabase() {

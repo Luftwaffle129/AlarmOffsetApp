@@ -1,4 +1,4 @@
-package com.example.alarmoffsetapp.data.database
+package com.example.alarmoffsetapp.data.database.data
 
 import androidx.room.Embedded
 import androidx.room.Relation
@@ -21,12 +21,13 @@ data class AlarmWithOffsets (
             name = alarm.name,
             baseTime = LocalTime.ofSecondOfDay(alarm.baseTime.toLong()),
             isRepeating = alarm.isRepeating,
-            scheduledDate = alarm.scheduledDate as LocalDate?,
-            daysOfWeek = DataConverter.daysOfWeekByteToSet(alarm.daysOfWeek),
+            scheduledDate = if (alarm.scheduledDate == null) null else LocalDate.ofEpochDay(alarm.scheduledDate),
+            daysOfWeek = alarm.daysOfWeek.toDaysOfWeekSet(),
             isVibrating = alarm.isVibrating,
             playsSound = alarm.playsSound,
             isActive = alarm.isActive,
             canDismissOffsets = alarm.canDismissOffsets,
+            alarmGroup = null,                                              // TODO: placeholder
             alarmOffsets = offsets.map { it.toAlarmOffset() }
         )
     }

@@ -1,4 +1,4 @@
-package com.example.alarmoffsetapp.data.database
+package com.example.alarmoffsetapp.data.database.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,28 +1,29 @@
+package com.example.alarmoffsetapp.data.database
+
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
-import com.example.alarmoffsetapp.data.database.AlarmDao
-import com.example.alarmoffsetapp.data.database.AlarmEntity
-import com.example.alarmoffsetapp.data.database.AlarmsDatabase
+import com.example.alarmoffsetapp.data.database.data.AlarmEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDate
 
+/**
+ * Instrumented test for AlarmDao.
+ */
 @RunWith(AndroidJUnit4::class)
 class AlarmDaoTest {
     private lateinit var alarmDao: AlarmDao
     private lateinit var alarmDatabase: AlarmsDatabase
 
-    private var alarm1 = AlarmEntity(
+    private var alarmEntity1 = AlarmEntity(
         id = 1,
         groupId = null,
         name = "alarm1",
@@ -36,13 +37,13 @@ class AlarmDaoTest {
         canDismissOffsets = true
     )
 
-    private var alarm2 = AlarmEntity(
+    private var alarmEntity2 = AlarmEntity(
         id = 2,
         groupId = null,
         name = "alarm2",
         baseTime = 60 * 123, // 123 minutes since midnight
         isRepeating = false,
-        scheduledDate = LocalDate.now().plusDays(1).toString(), // tomorrow
+        scheduledDate = LocalDate.now().plusDays(1).toEpochDay(), // tomorrow
         daysOfWeek = 0,
         isVibrating = true,
         playsSound = true,
@@ -72,25 +73,25 @@ class AlarmDaoTest {
     @Throws(Exception::class)
     fun daoInsert_insertsAlarmIntoDB() = runBlocking {
         addOneAlarmToDb()
-        val allItems = alarmDao.getAllAlarms().first()
-        assertEquals(allItems[0].alarm, alarm1)
+        val allItems = alarmDao.getAllAlarmsWithOffsets().first()
+        Assert.assertEquals(allItems[0].alarm, alarmEntity1)
     }
 
     @Test
     @Throws(Exception::class)
     fun daoInsert_insertsMultipleItemsIntoDB() = runBlocking {
         addTwoAlarmsToDb()
-        val allItems = alarmDao.getAllAlarms().first()
-        assertEquals(allItems[0].alarm, alarm1)
-        assertEquals(allItems[1].alarm, alarm2)
+        val allItems = alarmDao.getAllAlarmsWithOffsets().first()
+        Assert.assertEquals(allItems[0].alarm, alarmEntity1)
+        Assert.assertEquals(allItems[1].alarm, alarmEntity2)
     }
 
     private suspend fun addOneAlarmToDb() {
-        alarmDao.insertAlarm(alarm1)
+        alarmDao.insertAlarm(alarmEntity1)
     }
 
     private suspend fun addTwoAlarmsToDb() {
-        alarmDao.insertAlarm(alarm1)
-        alarmDao.insertAlarm(alarm2)
+        alarmDao.insertAlarm(alarmEntity1)
+        alarmDao.insertAlarm(alarmEntity2)
     }
 }

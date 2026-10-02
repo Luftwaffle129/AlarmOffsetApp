@@ -16,6 +16,7 @@ data class Alarm(
     val playsSound: Boolean,
     val isActive: Boolean,
     val canDismissOffsets: Boolean,
+    val alarmGroup: AlarmGroup?,
     val alarmOffsets: List<AlarmOffset>,
 ) {
     fun getNextBaseAlarm(): LocalDateTime {
