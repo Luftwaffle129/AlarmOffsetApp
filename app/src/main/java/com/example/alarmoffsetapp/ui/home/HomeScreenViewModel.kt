@@ -24,7 +24,6 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
             }.minByOrNull { it },
             timeUntilNextAlarm = getTimeUntilNextAlarm()
         )
-
     }
         .stateIn(
             scope = viewModelScope,
