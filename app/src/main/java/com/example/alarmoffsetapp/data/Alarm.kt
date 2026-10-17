@@ -83,7 +83,7 @@ data class Alarm(
                 throw Exception("Alarm is repeating but has no repeating days") // TODO: update with better exception
             }
 
-            val nextDateTime = now.with(baseTime)
+            var nextDateTime = now.with(baseTime)
 
             // if alarm on current day is active, return time
             if (daysOfWeek.contains(nextDateTime.dayOfWeek)) {
@@ -99,7 +99,7 @@ data class Alarm(
 
             // return base time on next repeating day
             while (true) {
-                nextDateTime.plusDays(1)
+                nextDateTime = nextDateTime.plusDays(1)
                 if (daysOfWeek.contains(nextDateTime.dayOfWeek)) return nextDateTime // if day of week is not in the list of active days, continue
             }
         }

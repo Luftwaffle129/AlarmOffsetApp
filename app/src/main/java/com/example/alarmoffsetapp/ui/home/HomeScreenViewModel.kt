@@ -8,26 +8,29 @@ import com.example.alarmoffsetapp.data.database.AlarmsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.Duration
 class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewModel() {
     val uiState: StateFlow<HomeUiState> = combine(
         alarmsRepository.getAllAlarmsStream(),
-        alarmsRepository.getAllAlarmGroupsStream(),
+        alarmsRepository.getAllAlarmGroupsStream()
     ) { alarms, groups ->
+
         HomeUiState(
             alarms = alarms,
             alarmGroups = groups,
             nextAlarm = alarms.map { alarm ->
                 alarm.getNextAlarm()
             }.minByOrNull { it },
-            timeUntilNextAlarm = getTimeUntilNextAlarm()
+            timeUntilNextAlarm = null //getTimeUntilNextAlarm()
         )
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            started = SharingStarted.Eagerly,
             initialValue = HomeUiState()
         )
 
@@ -46,7 +49,9 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
 
 
     fun onAlarmToggle(alarm: Alarm) {
-
+        viewModelScope.launch {
+            alarmsRepository.insertAlarm(alarm.copy(isActive = !alarm.isActive))
+        }
     }
 
     companion object {

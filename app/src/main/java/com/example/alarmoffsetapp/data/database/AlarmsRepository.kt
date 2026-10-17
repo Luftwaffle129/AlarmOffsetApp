@@ -10,7 +10,7 @@ interface AlarmsRepository {
 
     suspend fun insertAlarm(alarm: Alarm): Long
 
-    suspend fun insertAlarmOffsets(offsets: List<AlarmOffset>)
+    suspend fun insertAlarmOffsets(offsets: List<AlarmOffset>): List<Long>
 
     fun getAlarmStream(id: Long): Flow<Alarm>
     fun getAllAlarmsStream(): Flow<List<Alarm>>

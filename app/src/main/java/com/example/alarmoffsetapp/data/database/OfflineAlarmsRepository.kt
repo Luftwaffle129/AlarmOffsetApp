@@ -27,7 +27,7 @@ class OfflineAlarmsRepository(private val alarmDao: AlarmDao) : AlarmsRepository
         )
     }
 
-    override suspend fun insertAlarmOffsets(offsets: List<AlarmOffset>) {} // TODO: Implement this
+    override suspend fun insertAlarmOffsets(offsets: List<AlarmOffset>): List<Long> { return listOf() } // TODO: Implement this
 
     override fun getAlarmStream(id: Long): Flow<Alarm> = alarmDao.getAlarmWithOffsets(id).map {
         alarmWithOffsets -> alarmWithOffsets.toAlarm()
