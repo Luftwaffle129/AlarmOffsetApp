@@ -31,7 +31,7 @@ class FakeDataSource {
         isActive = false,
         canDismissOffsets = true
     )
-    val alarmList = mutableListOf(alarm.copy(baseTime = LocalTime.now().plusMinutes(5), alarmOffsets = alarmOffsetList), alarm.copy(id=1,isActive = true), alarm.copy(id=2, scheduledDate = null, isRepeating = true, daysOfWeek = setOf(
+    val alarmList = mutableListOf(alarm.copy(baseTime = alarm.baseTime.plusMinutes(-5), isActive = true, alarmOffsets = alarmOffsetList), alarm.copy(id=1,isActive = true), alarm.copy(id=2, scheduledDate = null, isRepeating = true, daysOfWeek = setOf(
         DayOfWeek.TUESDAY)))
     private val alarmGroup = AlarmGroup(
         id = 0,
