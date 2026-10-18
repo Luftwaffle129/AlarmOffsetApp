@@ -27,13 +27,13 @@ abstract class AlarmsDatabase : RoomDatabase() {
                 Room.databaseBuilder(context, AlarmsDatabase::class.java, "alarm_database")
                     .fallbackToDestructiveMigration(true)
                     .addCallback(object : Callback() {
-                        override fun onOpen(db: SupportSQLiteDatabase) {
-                            super.onOpen(db)
-
-                            CoroutineScope(Dispatchers.IO).launch {
-                                populateInitialData(Instance?.alarmDao())
-                            }
-                        }
+//                        override fun onOpen(db: SupportSQLiteDatabase) {
+//                            super.onOpen(db)
+//
+//                            CoroutineScope(Dispatchers.IO).launch {
+//                                populateInitialData(Instance?.alarmDao())
+//                            }
+//                        }
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
 

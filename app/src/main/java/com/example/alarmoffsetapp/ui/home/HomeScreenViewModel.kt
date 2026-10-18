@@ -18,14 +18,16 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
         alarmsRepository.getAllAlarmsStream(),
         alarmsRepository.getAllAlarmGroupsStream()
     ) { alarms, groups ->
+        val nextAlarmTime = alarms
+            .filter { alarm -> alarm.isActive }
+            .map { alarm -> alarm.getNextAlarm() }
+            .minByOrNull { it }
 
         HomeUiState(
             alarms = alarms,
             alarmGroups = groups,
-            nextAlarm = alarms.map { alarm ->
-                alarm.getNextAlarm()
-            }.minByOrNull { it },
-            timeUntilNextAlarm = null //getTimeUntilNextAlarm()
+            nextAlarm = nextAlarmTime,
+            timeUntilNextAlarm = getDurationUntilNextAlarm(nextAlarmTime)
         )
     }
         .stateIn(
@@ -34,13 +36,12 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
             initialValue = HomeUiState()
         )
 
-    fun getTimeUntilNextAlarm(): Duration? {
-        return if (uiState.value.nextAlarm != null) { // required as java Duration does not support nulls
-            Duration.between(uiState.value.nextAlarm, LocalDateTime.now())
+    fun getDurationUntilNextAlarm(time: LocalDateTime?): Duration? {
+        return if (time != null) { // required as java Duration does not support nulls
+            Duration.between(LocalDateTime.now(), time)
         } else {
             null
         }
-
     }
 
     fun onAlarmGroupToggle(alarmGroup: AlarmGroup) {

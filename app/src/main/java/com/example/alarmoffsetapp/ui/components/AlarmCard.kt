@@ -182,7 +182,7 @@ fun AlarmCard(
 
                 Switch(
                     checked = alarm.isActive,
-                    onCheckedChange = { onToggle(alarm.copy(isActive = !alarm.isActive)) },
+                    onCheckedChange = { onToggle(alarm) },
                     modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium)),
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.onSecondary,

@@ -63,5 +63,7 @@ class HomeViewModelTest {
 
         val nextAlarm = viewModel.uiState.value.nextAlarm
         val alarm = viewModel.uiState.value.alarms[0]
+
+        assertEquals(alarm.getNextAlarm(), nextAlarm)
     }
 }
