@@ -19,6 +19,9 @@ data class Alarm(
     val alarmGroup: AlarmGroup?,
     val alarmOffsets: List<AlarmOffset>,
 ) {
+    /**
+     * Gets next base alarm time in the future. The date follows next repeating time or scheduled date.
+     */
     fun getNextBaseAlarm(): LocalDateTime {
         val now = LocalDateTime.now()
 
@@ -54,6 +57,9 @@ data class Alarm(
             }
         }
     }
+    /**
+     * Gets next alarm time in the future while accounting for alarm offsets. The date follows next repeating time or scheduled date.
+     */
     fun getNextAlarm(): LocalDateTime {
 
         val now = LocalDateTime.now()

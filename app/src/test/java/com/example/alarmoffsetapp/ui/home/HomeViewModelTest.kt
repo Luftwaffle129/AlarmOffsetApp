@@ -4,12 +4,12 @@ import com.example.alarmoffsetapp.fake.FakeAlarmRepository
 import com.example.alarmoffsetapp.fake.FakeDataSource
 import com.example.alarmoffsetapp.rules.TestDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,8 +17,12 @@ class HomeViewModelTest {
     @get:Rule
     val testDispatcher = TestDispatcherRule()
 
+    /**
+     * Used for debugging the viewmodel for testing. Necessary for debugging flows
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Ignore("Used for fixing viewmodel")
     fun debug_initialization() = runTest {
         println("Before repository")
 
@@ -32,6 +36,9 @@ class HomeViewModelTest {
         println("After runCurrent")
     }
 
+    /**
+     * Check onAlarmToggle() toggles an alarms active state and that it is updated in the database and viewmodel
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun homeViewModel_onAlarmToggle_isOppositeActiveState() = runTest {
@@ -54,7 +61,9 @@ class HomeViewModelTest {
         advanceUntilIdle()
         assertEquals(isActive, viewModel.uiState.value.alarms[0].isActive)
     }
-
+    /**
+     * Check getNextAlarm() returns the correct alarm when two active alarms are present with differing times.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun homeViewModel_getNextAlarm_isCorrectWithAlarms() = runTest {
@@ -68,7 +77,9 @@ class HomeViewModelTest {
 
         assertEquals(alarm.getNextAlarm(), nextAlarm)
     }
-
+    /**
+     * Check getNextAlarm() returns the correct time when there is only one active alarm
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun homeViewModel_getNextAlarm_isCorrectWithActiveAlarm() = runTest {
@@ -84,7 +95,9 @@ class HomeViewModelTest {
 
         assertEquals(alarm.getNextAlarm(), nextAlarm)
     }
-
+    /**
+     * Check getNextAlarm() returns null when there are no active alarms
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun homeViewModel_getNextAlarm_isNullWithInactiveAlarm() = runTest {
@@ -99,7 +112,9 @@ class HomeViewModelTest {
 
         assertEquals(null, nextAlarm)
     }
-
+    /**
+     * Check getNextAlarm() returns null when there are no alarms
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun homeViewModel_getNextAlarm_isNullWithNoAlarms() = runTest {

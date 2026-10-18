@@ -1,12 +1,14 @@
 package com.example.alarmoffsetapp.data.database
 
-
 import com.example.alarmoffsetapp.data.database.data.toByte
 import com.example.alarmoffsetapp.data.database.data.toDaysOfWeekSet
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.DayOfWeek
 
+/**
+ * Conversion tests for the database repository implementation
+ */
 class ConversionTests {
     @Test
     fun daysOfWeekSetToByte_isCorrect() {

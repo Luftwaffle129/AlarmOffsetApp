@@ -65,6 +65,7 @@ fun AlarmGroupCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // alarm group name
             Text(
                 text = alarmGroup.name,
                 modifier = Modifier.padding(start = 8.dp),
@@ -77,7 +78,7 @@ fun AlarmGroupCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // active and inactive alarms
+                // number of active and inactive alarms, and toggle switch
 
                 Icon(
                     imageVector = Icons.Outlined.AlarmOn,

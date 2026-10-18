@@ -9,6 +9,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+/**
+ * Sample data for use in previews
+ */
 object SampleData {
     val alarmOffset = AlarmOffset(
         id = 0,
@@ -16,7 +19,12 @@ object SampleData {
         isActive = true
     )
 
-    val alarmOffsets = listOf(alarmOffset, alarmOffset.copy(offset = Duration.ofMinutes(61), isActive = false), alarmOffset)
+    val alarmOffsets = listOf(
+        alarmOffset,
+        alarmOffset.copy(offset = Duration.ofMinutes(61),
+            isActive = false),
+        alarmOffset
+    )
 
     val alarm = Alarm(
         id = 0,
@@ -32,14 +40,22 @@ object SampleData {
         isActive = false,
         canDismissOffsets = true
     )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
+    val alarms = listOf(
+        alarm,
+        alarm.copy(isActive = true),
+        alarm
+    )
     val alarmGroup = AlarmGroup(
         id = 0,
         name = "test",
         alarms = alarms,
         isActive = false,
     )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
+    val alarmGroups = listOf(
+        alarmGroup,
+        alarmGroup.copy(isActive = true),
+        alarmGroup
+    )
 
     val homeScreenUiState = HomeUiState(
         nextAlarm = LocalDateTime.now(),

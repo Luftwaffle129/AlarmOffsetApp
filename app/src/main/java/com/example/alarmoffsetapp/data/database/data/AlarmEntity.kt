@@ -21,6 +21,9 @@ data class AlarmEntity (
     @ColumnInfo(name = "can_snooze_offsets")  val canDismissOffsets: Boolean
 )
 
+/**
+ * Converts a set of days of week to a bitmask.
+ */
 fun Set<DayOfWeek>.toByte() : Byte {
     var value = 0
     for (day in this) {
@@ -29,11 +32,14 @@ fun Set<DayOfWeek>.toByte() : Byte {
     return value.toByte()
 }
 
+/**
+ * Converts a bitmask to a set of days of week.
+ */
 fun Byte.toDaysOfWeekSet() : Set<DayOfWeek> {
     val set = mutableSetOf<DayOfWeek>()
     for (i in 1..7) {
-        val mask = 1 shl (i - 1)
-        if ((this.toInt() and mask) != 0) {
+        val mask = 1 shl (i - 1) // get the bit position for day of week
+        if ((this.toInt() and mask) != 0) { // apply AND to the bitmask and the bit position
             set.add(DayOfWeek.of(i))
         }
     }

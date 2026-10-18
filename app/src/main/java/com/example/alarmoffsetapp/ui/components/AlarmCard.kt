@@ -42,6 +42,9 @@ import com.example.alarmoffsetapp.ui.util.dateTimeToTimeString
 import com.example.alarmoffsetapp.ui.util.getAmOrPm
 import java.time.Duration
 
+/**
+ * Alarm card composable. Displays name, next time, number of offsets, and toggle.
+ */
 @Composable
 fun AlarmCard(
     onClick: (Alarm) -> Unit,
@@ -72,6 +75,7 @@ fun AlarmCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // Name, base time and next date
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy((-8).dp)
@@ -102,16 +106,18 @@ fun AlarmCard(
                 )
             }
 
-
+            // offsets and toggle
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (alarm.alarmOffsets.isNotEmpty()) {
+                    // box to contain both number offsets and time of next offset if base alarm time has been passed
                     Box(
                         modifier = Modifier
                             .padding(start = dimensionResource(R.dimen.padding_medium)),
                     ) {
+                        // number of offsets
                         Surface(
                             modifier = Modifier
                                 .align(Alignment.Center),
@@ -148,7 +154,8 @@ fun AlarmCard(
                                 )
                             }
                         }
-                        if (baseAlarmAfterAlarmOffset && alarm.isActive) { // placeholder
+                        // time of next offset if base alarm time has been passed
+                        if (baseAlarmAfterAlarmOffset && alarm.isActive) {
                             Row(
                                 modifier =
                                     Modifier

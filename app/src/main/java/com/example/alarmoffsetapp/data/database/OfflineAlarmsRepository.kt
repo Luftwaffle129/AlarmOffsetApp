@@ -8,6 +8,9 @@ import com.example.alarmoffsetapp.data.database.data.toByte
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Local implementation of database repository
+ */
 class OfflineAlarmsRepository(private val alarmDao: AlarmDao) : AlarmsRepository {
     override suspend fun insertAlarm(alarm: Alarm): Long {
         return alarmDao.insertAlarm(

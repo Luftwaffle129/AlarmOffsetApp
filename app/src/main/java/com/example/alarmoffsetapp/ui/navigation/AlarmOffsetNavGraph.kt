@@ -11,11 +11,6 @@ import com.example.alarmoffsetapp.ui.editAlarm.EditAlarmScreen
 import com.example.alarmoffsetapp.ui.home.HomeDestination
 import com.example.alarmoffsetapp.ui.home.HomeScreen
 
-//enum class AlarmOffsetScreen(@StringRes val title: Int) {
-//    HomeScreen(title = R.string.home_screen),
-//    EditAlarm(title = R.string.edit_alarm),
-//    AddAlarm(title = R.string.add_alarm),
-//}
 
 @Composable
 fun AlarmOffsetNavHost(

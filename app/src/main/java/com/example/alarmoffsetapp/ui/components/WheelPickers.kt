@@ -22,6 +22,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlin.math.abs
 
+/**
+ * Scrollable wheel picker for numerical time values
+ */
 @Composable
 fun TimeWheelPicker(
     maxValue: Int,
@@ -67,9 +70,10 @@ fun TimeWheelPicker(
 
         val layoutInfo = listState.layoutInfo
 
+        // displays each numerical value
         items(Int.MAX_VALUE) { value ->
 
-            val itemInfo = layoutInfo.visibleItemsInfo // get item information
+            val itemInfo = layoutInfo.visibleItemsInfo // get current item information
                 .firstOrNull { it.index == value }
 
             val center =    // get center of the lazy column
@@ -85,6 +89,7 @@ fun TimeWheelPicker(
             val centerMultiplier = (1f - distance / 100f) // calculate the multiplier from the distance
                 .coerceIn(0f, 1f)
 
+            // calculate font and opacity based on distance from center
             val fontSize = baseFontSize + baseFontSize * centerMultiplier * 0.5f
             val opacity = 0.5f + centerMultiplier * 0.5f
 
@@ -112,6 +117,9 @@ fun TimeWheelPicker(
     }
 }
 
+/**
+ * Scrollable wheel picker for AM or PM
+ */
 @Composable
 fun DayPeriodWheelPicker(
     listState: LazyListState,
@@ -158,7 +166,7 @@ fun DayPeriodWheelPicker(
 
         items(timePeriods) { value ->
 
-            val itemInfo = layoutInfo.visibleItemsInfo // get item information
+            val itemInfo = layoutInfo.visibleItemsInfo // get current item information
                 .firstOrNull { it.index == timePeriods.indexOf(value) }
 
             val center =    // get center of the lazy column
@@ -174,6 +182,7 @@ fun DayPeriodWheelPicker(
             val centerMultiplier = (1f - distance / 100f) // calculate the multiplier from the distance
                 .coerceIn(0f, 1f)
 
+            // calculate font and opacity based on distance from center
             val fontSize = baseFontSize + baseFontSize * centerMultiplier * 0.5f
             val opacity = 0.5f + centerMultiplier * 0.5f
 

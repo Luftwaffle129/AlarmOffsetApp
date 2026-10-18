@@ -13,6 +13,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+/**
+ * Room database implementation
+ */
 @Database(entities = [AlarmGroupEntity::class, AlarmEntity::class, AlarmOffsetEntity::class], version = 2, exportSchema = false)
 abstract class AlarmsDatabase : RoomDatabase() {
     abstract fun alarmDao(): AlarmDao
@@ -26,14 +29,7 @@ abstract class AlarmsDatabase : RoomDatabase() {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, AlarmsDatabase::class.java, "alarm_database")
                     .fallbackToDestructiveMigration(true)
-                    .addCallback(object : Callback() {
-//                        override fun onOpen(db: SupportSQLiteDatabase) {
-//                            super.onOpen(db)
-//
-//                            CoroutineScope(Dispatchers.IO).launch {
-//                                populateInitialData(Instance?.alarmDao())
-//                            }
-//                        }
+                    .addCallback(object : Callback() {                          // For testing purposes only. Populates app initially with data
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
 
@@ -47,7 +43,7 @@ abstract class AlarmsDatabase : RoomDatabase() {
             }
         }
 
-        private suspend fun populateInitialData(alarmDao: AlarmDao?) {
+        private suspend fun populateInitialData(alarmDao: AlarmDao?) { // For testing purposes only
             val initialAlarm = AlarmEntity(
                 id = 0, // Room autoGenerate will assign ID
                 groupId = null,

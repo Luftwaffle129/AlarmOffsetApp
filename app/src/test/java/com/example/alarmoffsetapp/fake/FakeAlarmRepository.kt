@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Fake repository for testing
+ */
 class FakeAlarmRepository(
     private val alarms: MutableStateFlow<List<Alarm>> = MutableStateFlow(FakeDataSource().alarmList),
     private val alarmGroups: MutableStateFlow<List<AlarmGroup>> = MutableStateFlow(FakeDataSource().alarmGroupList)

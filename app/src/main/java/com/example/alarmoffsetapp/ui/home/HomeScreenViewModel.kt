@@ -18,7 +18,7 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
         alarmsRepository.getAllAlarmsStream(),
         alarmsRepository.getAllAlarmGroupsStream()
     ) { alarms, groups ->
-        val nextAlarmTime = alarms
+        val nextAlarmTime = alarms // get next alarm time from active alarms
             .filter { alarm -> alarm.isActive }
             .map { alarm -> alarm.getNextAlarm() }
             .minByOrNull { it }
@@ -36,6 +36,9 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
             initialValue = HomeUiState()
         )
 
+    /**
+     * Gets the duration between the current time and the next alarm time.
+     */
     fun getDurationUntilNextAlarm(time: LocalDateTime?): Duration? {
         return if (time != null) { // required as java Duration does not support nulls
             Duration.between(LocalDateTime.now(), time)
@@ -44,11 +47,16 @@ class HomeScreenViewModel(private val alarmsRepository: AlarmsRepository): ViewM
         }
     }
 
+    /**
+     * Toggles the active state of an alarm group.
+     */
     fun onAlarmGroupToggle(alarmGroup: AlarmGroup) {
 
     }
 
-
+    /**
+     * Toggles the active state of an alarm.
+     */
     fun onAlarmToggle(alarm: Alarm) {
         viewModelScope.launch {
             alarmsRepository.insertAlarm(alarm.copy(isActive = !alarm.isActive))

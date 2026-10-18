@@ -59,7 +59,6 @@ import com.example.alarmoffsetapp.ui.util.durationToString
 object HomeDestination : NavigationDestination {
     override val route = "home"
 }
-
 @Composable
 fun HomeScreen(
     is24HourFormat: Boolean,
@@ -87,6 +86,11 @@ fun HomeScreen(
     )
 }
 
+
+/**
+ * Homescreen composable
+ */
+// separate from main composable to provide access to UI state for previews
 @Composable
 fun HomeBody(
     uiState: HomeUiState,
@@ -110,7 +114,7 @@ fun HomeBody(
         ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item{
+        item{ // next alarm header and settings icon
             RegionTitle(
                 title = R.string.next_alarm,
                 icon = Icons.Outlined.MoreVert,
@@ -125,7 +129,7 @@ fun HomeBody(
                 }
             )
         }
-        item {
+        item { // next alarm
             NextAlarm(
                 nextAlarm = uiState.nextAlarm,
                 is24HourFormat = is24HourFormat,
@@ -133,13 +137,14 @@ fun HomeBody(
             )
         }
         if (uiState.alarmGroups.isNotEmpty()) {
-            item {
+            item { // alarm group header
                 RegionTitle(
                     title = R.string.alarm_groups,
                     icon = null,
                     onTextClick = onOpenAlarmGroupScreen,
                 )
             }
+            // list of all alarm groups
             items(uiState.alarmGroups) { alarmGroup ->
                 AlarmGroupCard(
                     alarmGroup = alarmGroup,
@@ -148,7 +153,7 @@ fun HomeBody(
                 )
             }
         }
-        item {
+        item { // alarm header and add alarm icon
             RegionTitle(
                 title = R.string.alarms,
                 icon = Icons.Outlined.Add,
@@ -156,6 +161,7 @@ fun HomeBody(
                 onIconClick = onAddAlarm
             )
         }
+        // list of all alarms
         items(uiState.alarms) { alarm ->
             AlarmCard(
                 alarm = alarm,
@@ -167,6 +173,9 @@ fun HomeBody(
     }
 }
 
+/**
+ * Composable that displays a clickable title and an optional clickable icon.
+ */
 @Composable
 fun RegionTitle(
     @StringRes title: Int,
@@ -215,6 +224,9 @@ fun RegionTitle(
     }
 }
 
+/**
+ * Composable that displays a dropdown menu for options.
+ */
 @Composable
 fun OptionsDropDownMenu(
     expanded: Boolean,
@@ -260,6 +272,9 @@ fun OptionsDropDownMenu(
     }
 }
 
+/**
+ * Composable that displays a card with the next alarm time and date if there is one.
+ */
 @Composable
 fun NextAlarm(
     nextAlarm: LocalDateTime?,
