@@ -1,3 +1,6 @@
+Immediate:
+ - Alarm function testing
+ - 
 
 UI:
  - [ ] homescreen

@@ -6,13 +6,12 @@ import com.example.alarmoffsetapp.data.AlarmOffset
 import com.example.alarmoffsetapp.data.database.AlarmsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
-class FakeAlarmRepository : AlarmsRepository {
-
-    private val alarms = MutableStateFlow(FakeDataSource().alarmList)
-    private val alarmGroups = MutableStateFlow(FakeDataSource().alarmGroupList)
+class FakeAlarmRepository(
+    private val alarms: MutableStateFlow<List<Alarm>> = MutableStateFlow(FakeDataSource().alarmList),
+    private val alarmGroups: MutableStateFlow<List<AlarmGroup>> = MutableStateFlow(FakeDataSource().alarmGroupList)
+) : AlarmsRepository {
 
     override suspend fun insertAlarm(alarm: Alarm): Long {
         val updated = alarms.value.toMutableList()
@@ -38,4 +37,7 @@ class FakeAlarmRepository : AlarmsRepository {
 
     override fun getAllAlarmGroupsStream(): Flow<List<AlarmGroup>> = alarmGroups
 
+    companion object {
+        fun empty() = FakeAlarmRepository(alarms = MutableStateFlow(emptyList()), alarmGroups = MutableStateFlow(emptyList()))
+    }
 }

@@ -1,8 +1,10 @@
 package com.example.alarmoffsetapp.ui.home
 
 import com.example.alarmoffsetapp.fake.FakeAlarmRepository
+import com.example.alarmoffsetapp.fake.FakeDataSource
 import com.example.alarmoffsetapp.rules.TestDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -55,7 +57,7 @@ class HomeViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun homeViewModel_getNextAlarm_isCorrect() = runTest {
+    fun homeViewModel_getNextAlarm_isCorrectWithAlarms() = runTest {
         val repository = FakeAlarmRepository()
         val viewModel = HomeScreenViewModel(alarmsRepository = repository)
 
@@ -65,5 +67,49 @@ class HomeViewModelTest {
         val alarm = viewModel.uiState.value.alarms[0]
 
         assertEquals(alarm.getNextAlarm(), nextAlarm)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun homeViewModel_getNextAlarm_isCorrectWithActiveAlarm() = runTest {
+        val repository = FakeAlarmRepository.empty().apply {
+            insertAlarm( FakeDataSource().alarmList[0].copy(isActive = true) )
+        }
+        val viewModel = HomeScreenViewModel(alarmsRepository = repository)
+
+        runCurrent()
+
+        val nextAlarm = viewModel.uiState.value.nextAlarm
+        val alarm = viewModel.uiState.value.alarms[0]
+
+        assertEquals(alarm.getNextAlarm(), nextAlarm)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun homeViewModel_getNextAlarm_isNullWithInactiveAlarm() = runTest {
+        val repository = FakeAlarmRepository.empty().apply {
+            insertAlarm( FakeDataSource().alarmList[0].copy(isActive = false) )
+        }
+        val viewModel = HomeScreenViewModel(alarmsRepository = repository)
+
+        runCurrent()
+
+        val nextAlarm = viewModel.uiState.value.nextAlarm
+
+        assertEquals(null, nextAlarm)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun homeViewModel_getNextAlarm_isNullWithNoAlarms() = runTest {
+        val repository = FakeAlarmRepository.empty()
+        val viewModel = HomeScreenViewModel(alarmsRepository = repository)
+
+        runCurrent()
+
+        val nextAlarm = viewModel.uiState.value.nextAlarm
+
+        assertEquals(null, nextAlarm)
     }
 }
