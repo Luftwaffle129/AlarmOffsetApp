@@ -35,7 +35,7 @@ data class Alarm(
             // if base time after current time, return base time
             if (baseDateTime.isAfter(now)) return baseDateTime
 
-            return LocalDateTime.of(LocalDateTime.now().toLocalDate().plusDays(1), baseTime) // else, return alarm time tomorrow
+            return LocalDateTime.of(now.toLocalDate().plusDays(1), baseTime) // else, return alarm time tomorrow
 
         } else { // alarm is repeating
 

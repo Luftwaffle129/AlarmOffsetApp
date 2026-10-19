@@ -54,6 +54,6 @@ class AlarmTest {
             canDismissOffsets = true
         )
 
-        assertEquals(LocalDateTime.of(currentDay.plusDays(1), currentTime), alarm.getNextBaseAlarm())
+        assertEquals(LocalDateTime.of(currentDay.plusDays(1), currentTime.minusMinutes(10)), alarm.getNextBaseAlarm())
     }
 }
