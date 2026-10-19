@@ -1,19 +1,26 @@
 package com.example.alarmoffsetapp.ui.home
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,8 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -37,14 +48,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.alarmoffsetapp.R
 import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.data.AlarmGroup
-import com.example.alarmoffsetapp.ui.components.AlarmGroupList
-import com.example.alarmoffsetapp.ui.components.AlarmList
+import com.example.alarmoffsetapp.preview.SampleData
+import com.example.alarmoffsetapp.ui.components.AlarmCard
+import com.example.alarmoffsetapp.ui.components.AlarmGroupCard
+import com.example.alarmoffsetapp.ui.navigation.NavigationDestination
 import com.example.alarmoffsetapp.ui.theme.AppTheme
 import com.example.alarmoffsetapp.ui.util.dateTimeToString
 import com.example.alarmoffsetapp.ui.util.durationToString
 
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+}
 @Composable
 fun HomeScreen(
+    is24HourFormat: Boolean,
+    navigateToAlarmAdd: () -> Unit,
+    navigateToAlarmEdit: (Alarm) -> Unit,
+    navigateToGroupAlarmEdit: (AlarmGroup) -> Unit,
+    navigateToViewGroupAlarms: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -52,82 +74,116 @@ fun HomeScreen(
 
     HomeBody(
         uiState = uiState.value,
-        onAddAlarm = viewModel::onAddAlarm,
-        onAlarmClick = viewModel::onAlarmClick,
+        is24HourFormat = is24HourFormat,
+        onAddAlarm = navigateToAlarmAdd,
+        onAlarmClick = navigateToAlarmEdit,
         onAlarmToggle = viewModel::onAlarmToggle,
-        onAlarmGroupClick = viewModel::onAlarmGroupClick,
+        onAlarmGroupClick = navigateToGroupAlarmEdit,
         onAlarmGroupToggle = viewModel::onAlarmGroupToggle,
+        onOpenAlarmGroupScreen = navigateToViewGroupAlarms,
+        onSettingsClick = navigateToSettings,
         modifier = modifier
     )
 }
 
+
+/**
+ * Homescreen composable
+ */
+// separate from main composable to provide access to UI state for previews
 @Composable
 fun HomeBody(
-    uiState: HomeScreenUiState,
+    uiState: HomeUiState,
+    is24HourFormat: Boolean,
     onAddAlarm: () -> Unit,
     onAlarmClick: (Alarm) -> Unit,
     onAlarmToggle: (Alarm) -> Unit,
     onAlarmGroupClick: (AlarmGroup) -> Unit,
     onAlarmGroupToggle: (AlarmGroup) -> Unit,
+    onOpenAlarmGroupScreen: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var expandedOptionsMenu by remember { mutableStateOf(false) }
+
     LazyColumn(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(
+            start = dimensionResource(R.dimen.padding_medium),
+            top = dimensionResource(R.dimen.padding_medium),
+            end = dimensionResource(R.dimen.padding_medium),
+        ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item{
+        item{ // next alarm header and settings icon
             RegionTitle(
                 title = R.string.next_alarm,
                 icon = Icons.Outlined.MoreVert,
-                onIconClick = {}                    // TODO: settings bar
+                onIconClick = { expandedOptionsMenu = true },
+                dropDownMenu = {
+                    OptionsDropDownMenu(
+                        expanded = expandedOptionsMenu,
+                        onDismissRequest = { expandedOptionsMenu = false },
+                        onAlarmGroupsClick = onOpenAlarmGroupScreen,
+                        onSettingsClick = onSettingsClick,
+                    )
+                }
             )
         }
-        item {
+        item { // next alarm
             NextAlarm(
                 nextAlarm = uiState.nextAlarm,
+                is24HourFormat = is24HourFormat,
                 timeUntilNextAlarm = uiState.timeUntilNextAlarm
             )
         }
-        item {
-            RegionTitle(
-                title = R.string.alarm_groups,
-                icon = null,
-                onTextClick = {},                   // TODO: Open only alarm groups menu
-            )
+        if (uiState.alarmGroups.isNotEmpty()) {
+            item { // alarm group header
+                RegionTitle(
+                    title = R.string.alarm_groups,
+                    icon = null,
+                    onTextClick = onOpenAlarmGroupScreen,
+                )
+            }
+            // list of all alarm groups
+            items(uiState.alarmGroups) { alarmGroup ->
+                AlarmGroupCard(
+                    alarmGroup = alarmGroup,
+                    onClick = onAlarmGroupClick,
+                    onToggle = onAlarmGroupToggle
+                )
+            }
         }
-        item {
-            AlarmGroupList(
-                alarmGroups = uiState.alarmGroups,
-                onAlarmGroupClick = onAlarmGroupClick,
-                onAlarmGroupToggle = onAlarmGroupToggle
-            )
-        }
-        item {
+        item { // alarm header and add alarm icon
             RegionTitle(
                 title = R.string.alarms,
                 icon = Icons.Outlined.Add,
-                onTextClick = {},                   // TODO: Open only alarm groups menu
+                onTextClick = {},
                 onIconClick = onAddAlarm
             )
         }
-        item {
-            AlarmList(
-                alarms = uiState.alarms,
-                onAlarmClick = onAlarmClick,
-                onAlarmToggle = onAlarmToggle,
-                is24Hour = true                     // TODO: handle 24 hour
+        // list of all alarms
+        items(uiState.alarms) { alarm ->
+            AlarmCard(
+                alarm = alarm,
+                onClick = onAlarmClick,
+                onToggle = onAlarmToggle,
+                is24Hour = is24HourFormat
             )
         }
     }
 }
 
+/**
+ * Composable that displays a clickable title and an optional clickable icon.
+ */
 @Composable
 fun RegionTitle(
     @StringRes title: Int,
     icon: ImageVector?,
+    modifier: Modifier = Modifier,
     onTextClick: () -> Unit = {},
     onIconClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    dropDownMenu: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -137,28 +193,92 @@ fun RegionTitle(
     ) {
         Text(
             text = stringResource(title),
+            modifier = Modifier
+                .clickable(enabled = onTextClick != {}) { onTextClick() },
             style = MaterialTheme.typography.labelLarge,
             fontSize = 20.sp
         )
         Row(
-            modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small))
-                )
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                        //.padding(end = dimensionResource(R.dimen.padding_small))
+                        ,
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            //.padding(end = dimensionResource(R.dimen.padding_small))
+                            .clickable(enabled = onIconClick != {}) { onIconClick() },
+                    )
+                    dropDownMenu()
+                }
             }
         }
     }
 }
 
+/**
+ * Composable that displays a dropdown menu for options.
+ */
+@Composable
+fun OptionsDropDownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onAlarmGroupsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box (
+//        modifier = modifier
+//            .padding(dimensionResource(R.dimen.padding_medium)),
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = Modifier
+                //.padding(dimensionResource(R.dimen.padding_medium))
+                ,
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(R.string.alarm_groups),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 16.sp
+                    )
+                },
+                onClick = onAlarmGroupsClick,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(R.string.settings),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 16.sp
+                    )
+                },
+                onClick = onSettingsClick
+            )
+        }
+    }
+}
+
+/**
+ * Composable that displays a card with the next alarm time and date if there is one.
+ */
 @Composable
 fun NextAlarm(
     nextAlarm: LocalDateTime?,
+    is24HourFormat: Boolean,
     timeUntilNextAlarm: Duration?,
     modifier: Modifier = Modifier,
 ) {
@@ -196,7 +316,7 @@ fun NextAlarm(
                 Spacer(modifier.height(dimensionResource(R.dimen.padding_small)))
                 // exact time of next alarm
                 Text(
-                    text = dateTimeToString(nextAlarm),
+                    text = dateTimeToString(nextAlarm, is24HourFormat),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -207,41 +327,19 @@ fun NextAlarm(
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyLightPreview() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
-
-    val uiState = HomeScreenUiState(
-        nextAlarm = LocalDateTime.now(),
-        timeUntilNextAlarm = Duration.ofDays(1),
-        alarmGroups = alarmGroups,
-        alarms = alarms
-    )
 
     AppTheme(dynamicColor = false, darkTheme = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
-                uiState = uiState,
+                uiState = SampleData.homeScreenUiState,
+                is24HourFormat = false,
                 onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 onAlarmGroupClick = {},
-                onAlarmGroupToggle = {}
+                onAlarmGroupToggle = {},
+                onOpenAlarmGroupScreen = {},
+                onSettingsClick = {}
             )
         }
     }
@@ -250,41 +348,18 @@ fun HomeBodyLightPreview() {
 @Preview(showBackground = true)
 @Composable
 fun HomeBodyDarkPreview() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
-
-    val uiState = HomeScreenUiState(
-        nextAlarm = LocalDateTime.now(),
-        timeUntilNextAlarm = Duration.ofDays(1),
-        alarmGroups = alarmGroups,
-        alarms = alarms
-    )
-
     AppTheme(dynamicColor = false, darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
             HomeBody(
-                uiState = uiState,
+                uiState = SampleData.homeScreenUiState,
+                is24HourFormat = false,
                 onAddAlarm = {},
                 onAlarmClick = {},
                 onAlarmToggle = {},
                 onAlarmGroupClick = {},
-                onAlarmGroupToggle = {}
+                onAlarmGroupToggle = {},
+                onOpenAlarmGroupScreen = {},
+                onSettingsClick = {}
             )
         }
     }
@@ -296,6 +371,7 @@ fun NextAlarmPreview() {
     AppTheme(dynamicColor = false, darkTheme = false) {
         NextAlarm(
             nextAlarm = LocalDateTime.now(),
+            is24HourFormat = false,
             timeUntilNextAlarm = Duration.ofDays(1)
         )
     }
@@ -307,7 +383,29 @@ fun NextAlarmPreviewEmpty() {
     AppTheme(dynamicColor = false, darkTheme = false) {
         NextAlarm(
             nextAlarm = null,
+            is24HourFormat = false,
             timeUntilNextAlarm = null
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OptionsDropDownMenuPreview() {
+    AppTheme(dynamicColor = false, darkTheme = false) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            OptionsDropDownMenu(
+                expanded = true,
+                onDismissRequest = {},
+                onAlarmGroupsClick = {},
+                onSettingsClick = {}
+            )
+        }
     }
 }

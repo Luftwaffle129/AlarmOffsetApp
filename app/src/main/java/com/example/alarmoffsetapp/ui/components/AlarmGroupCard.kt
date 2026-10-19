@@ -2,21 +2,17 @@ package com.example.alarmoffsetapp.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.AlarmOff
 import androidx.compose.material.icons.outlined.AlarmOn
-import androidx.compose.material.icons.outlined.BrowseGallery
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -24,52 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alarmoffsetapp.R
-import com.example.alarmoffsetapp.data.Alarm
 import com.example.alarmoffsetapp.data.AlarmGroup
+import com.example.alarmoffsetapp.preview.SampleData
 import com.example.alarmoffsetapp.ui.theme.AppTheme
-import com.example.alarmoffsetapp.ui.util.dateTimeToTimeString
-import com.example.alarmoffsetapp.ui.util.getAmOrPm
-import java.time.LocalDateTime
 
-/**
- * Displays a list of alarm groups.
- *
- * @param alarmGroups the list of alarm groups to display
- * @param onAlarmGroupClick the callback to invoke when an alarm group is clicked
- * @param onAlarmGroupToggle the callback to invoke when the toggle for an alarm group is clicked
- * @param modifier the modifier to apply to this layout
- */
-@Composable
-fun AlarmGroupList(
-    alarmGroups: List<AlarmGroup>,
-    onAlarmGroupClick: (AlarmGroup) -> Unit,
-    onAlarmGroupToggle: (AlarmGroup) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        alarmGroups.forEach { alarmGroup ->
-            AlarmGroupCard(
-                alarmGroup = alarmGroup,
-                onClick = onAlarmGroupClick,
-                onToggle = onAlarmGroupToggle
-            )
-        }
-    }
-}
 /**
  * Displays a single alarm group.
  *
@@ -95,16 +54,18 @@ fun AlarmGroupCard(
         )
     ) {
         Row(
-            modifier = Modifier.padding(
-                start = dimensionResource(R.dimen.padding_medium),
-                end = dimensionResource(R.dimen.padding_medium),
-                top = dimensionResource(R.dimen.padding_small),
-                bottom = dimensionResource(R.dimen.padding_small)
-            )
+            modifier = Modifier
+                .padding(
+                    start = dimensionResource(R.dimen.padding_medium),
+                    end = dimensionResource(R.dimen.padding_medium),
+                    top = dimensionResource(R.dimen.padding_small),
+                    bottom = dimensionResource(R.dimen.padding_small)
+                )
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // alarm group name
             Text(
                 text = alarmGroup.name,
                 modifier = Modifier.padding(start = 8.dp),
@@ -117,12 +78,17 @@ fun AlarmGroupCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // active and inactive alarms
+                // number of active and inactive alarms, and toggle switch
 
                 Icon(
                     imageVector = Icons.Outlined.AlarmOn,
                     contentDescription = null,
-                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium), end = dimensionResource(R.dimen.padding_extra_small)).size(28.dp),
+                    modifier = Modifier
+                        .padding(
+                            start = dimensionResource(R.dimen.padding_medium),
+                            end = dimensionResource(R.dimen.padding_extra_small)
+                        )
+                        .size(28.dp),
                     tint = if (alarmGroup.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
@@ -135,7 +101,12 @@ fun AlarmGroupCard(
                 Icon(
                     imageVector = Icons.Outlined.AlarmOff,
                     contentDescription = null,
-                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium), end = dimensionResource(R.dimen.padding_extra_small)).size(28.dp),
+                    modifier = Modifier
+                        .padding(
+                            start = dimensionResource(R.dimen.padding_medium),
+                            end = dimensionResource(R.dimen.padding_extra_small)
+                        )
+                        .size(28.dp),
                     tint = if (alarmGroup.isActive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
@@ -164,60 +135,12 @@ fun AlarmGroupCard(
 @Preview
 @Composable
 fun AlarmGroupCardPreviewLight() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
 
     AppTheme(dynamicColor = false, darkTheme = false) {
         AlarmGroupCard(
-            alarmGroup = alarmGroup,
+            alarmGroup = SampleData.alarmGroup,
             onClick = {},
             onToggle = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AlarmGroupListPreviewLight() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
-
-    AppTheme(dynamicColor = false, darkTheme = false) {
-        AlarmGroupList(
-            alarmGroups = alarmGroups,
-            onAlarmGroupClick = {},
-            onAlarmGroupToggle = {}
         )
     }
 }
@@ -225,63 +148,12 @@ fun AlarmGroupListPreviewLight() {
 @Preview
 @Composable
 fun AlarmGroupCardPreviewDark() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
 
     AppTheme(dynamicColor = false, darkTheme = true) {
         AlarmGroupCard(
-            alarmGroup = alarmGroup,
+            alarmGroup = SampleData.alarmGroup,
             onClick = {},
             onToggle = {}
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AlarmGroupListPreviewDark() {
-    val alarm = Alarm(
-        id = 0,
-        name = "test",
-        nextTime = LocalDateTime.now(),
-        daysOfWeek = setOf(),
-        isVibrating = true,
-        alarmOffsets = listOf(),
-        isActive = false,
-        canSnoozeOffsets = true
-    )
-    val alarms = listOf(alarm, alarm.copy(isActive = true), alarm)
-    val alarmGroup = AlarmGroup(
-        id = 0,
-        name = "test",
-        alarms = alarms,
-        isActive = false,
-    )
-    val alarmGroups = listOf(alarmGroup, alarmGroup.copy(isActive = true), alarmGroup)
-
-    AppTheme(dynamicColor = false, darkTheme = true) {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            AlarmGroupList(
-                alarmGroups = alarmGroups,
-                onAlarmGroupClick = {},
-                onAlarmGroupToggle = {}
-            )
-        }
-
     }
 }

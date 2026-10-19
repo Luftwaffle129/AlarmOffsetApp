@@ -11,6 +11,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/*
+ * functions for converting data types using resources
+ */
+
+/**
+ * Converts a duration to a string with days, hours, and minutes.
+ */
 @Composable
 fun durationToString(duration: Duration) : String {
     val days = duration.toDays().toInt()
@@ -47,11 +54,17 @@ fun durationToString(duration: Duration) : String {
     }
 }
 
+/**
+ * Converts a duration to a string with hours and minutes.
+ */
 @Composable
 fun dateTimeToString(dateTime: LocalDateTime, is24HourFormat: Boolean = true) : String {
     return dateTimeToTimeString(dateTime, is24HourFormat) + " " + dateTimeToDateString(dateTime)
 }
 
+/**
+ * Converts a LocalDateTime to a date string.
+ */
 @Composable
 fun dateTimeToDateString(dateTime: LocalDateTime) : String {
     val pattern = "MMM d"
@@ -61,12 +74,18 @@ fun dateTimeToDateString(dateTime: LocalDateTime) : String {
         .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } } // English only, apply locale to handle other languages
 }
 
+/**
+ * Converts a LocalDateTime to hours and minutes.
+ */
 @Composable
 fun dateTimeToTimeString(dateTime: LocalDateTime, is24HourFormat: Boolean = true) : String {
     val pattern = if (is24HourFormat) "H:mm" else "h:mm"
     return dateTime.format(DateTimeFormatter.ofPattern(pattern))
 }
 
+/**
+ * Converts a LocalDateTime to AM or PM.
+ */
 @Composable
 fun getAmOrPm(dateTime: LocalDateTime) : String {
     val pattern = "a"
