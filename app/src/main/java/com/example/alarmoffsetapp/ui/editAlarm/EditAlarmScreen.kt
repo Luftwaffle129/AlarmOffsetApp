@@ -27,6 +27,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -214,9 +216,12 @@ fun IntervalSelector(
                     ) {
                         Text(
                             text = DayOfWeek.of(value + 1).name.substring(0..0),
-                            modifier = Modifier.padding(top = 2.dp),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 24.sp,
+                            modifier = Modifier.padding(top = 0.dp),
+                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false)),
+                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                            fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
+                            fontSize = 20.sp,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -227,47 +232,47 @@ fun IntervalSelector(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun EditAlarmBodyLightPreview() {
-    AppTheme(dynamicColor = false) {
-        Surface(
-            modifier = Modifier,
-            color = MaterialTheme.colorScheme.background
-        ) {
-            EditAlarmBody(
-                uiState = EditAlarmUiState(),
-                is24HourFormat = false,
-                onHourSelected = {},
-                onMinuteSelected = {},
-                onTimePeriodSelected = {},
-                onDayOfWeekCheckedChanged = { _, _ -> },
-                onCalendarClicked = {}
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EditAlarmBodyDarkPreview() {
-    AppTheme(dynamicColor = false, darkTheme = true) {
-        Surface(
-            modifier = Modifier,
-            color = MaterialTheme.colorScheme.background
-        ) {
-            EditAlarmBody(
-                uiState = EditAlarmUiState(),
-                is24HourFormat = false,
-                onHourSelected = {},
-                onMinuteSelected = {},
-                onTimePeriodSelected = {},
-                onDayOfWeekCheckedChanged = { _, _ -> },
-                onCalendarClicked = {}
-            )
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun EditAlarmBodyLightPreview() {
+//    AppTheme(dynamicColor = false) {
+//        Surface(
+//            modifier = Modifier,
+//            color = MaterialTheme.colorScheme.background
+//        ) {
+//            EditAlarmBody(
+//                uiState = EditAlarmUiState(),
+//                is24HourFormat = false,
+//                onHourSelected = {},
+//                onMinuteSelected = {},
+//                onTimePeriodSelected = {},
+//                onDayOfWeekCheckedChanged = { _, _ -> },
+//                onCalendarClicked = {}
+//            )
+//        }
+//    }
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun EditAlarmBodyDarkPreview() {
+//    AppTheme(dynamicColor = false, darkTheme = true) {
+//        Surface(
+//            modifier = Modifier,
+//            color = MaterialTheme.colorScheme.background
+//        ) {
+//            EditAlarmBody(
+//                uiState = EditAlarmUiState(),
+//                is24HourFormat = false,
+//                onHourSelected = {},
+//                onMinuteSelected = {},
+//                onTimePeriodSelected = {},
+//                onDayOfWeekCheckedChanged = { _, _ -> },
+//                onCalendarClicked = {}
+//            )
+//        }
+//    }
+//}
 
 @Preview
 @Composable
